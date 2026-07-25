@@ -68,12 +68,10 @@ export async function POST(request: Request) {
     const normalizedEmail = email.toLowerCase().trim()
 
     // 4. Check for duplicate comment for this serviceSlug + email
-    const existingComment = await prisma.serviceComment.findUnique({
+    const existingComment = await prisma.serviceComment.findFirst({
       where: {
-        serviceSlug_email: {
-          serviceSlug,
-          email: normalizedEmail,
-        },
+        serviceSlug,
+        email: normalizedEmail,
       },
     })
 
