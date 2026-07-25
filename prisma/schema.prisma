@@ -1,0 +1,299 @@
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  password  String
+  role      String   @default("tester")
+  dpUrl     String?  @db.Text
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model PageContent {
+  id      String @id @default(cuid())
+  key     String @unique
+  content String
+}
+
+model NewsPost {
+  id          String   @id @default(cuid())
+  title       String
+  slug        String   @unique
+  excerpt     String?
+  content     String?  @db.Text
+  image       String?
+  videoUrl    String?
+  category    String   @default("General")
+  published   Boolean  @default(true)
+  isPublished Boolean  @default(true)
+  publishedAt DateTime @default(now())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Service {
+  id          String   @id @default(cuid())
+  title       String
+  slug        String   @unique
+  excerpt     String
+  content     String?
+  image       String
+  publishedAt DateTime @default(now())
+  comments    Int      @default(0)
+  isPublished Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Project {
+  id          String   @id @default(cuid())
+  title       String
+  slug        String   @unique
+  excerpt     String
+  content     String?
+  image       String
+  isPublished Boolean  @default(true)
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Event {
+  id          String    @id @default(cuid())
+  title       String
+  slug        String    @unique
+  excerpt     String?
+  content     String?
+  image       String?
+  posterImage String?
+  videoUrl    String?
+  date        DateTime
+  endDate     DateTime?
+  startTime   String?
+  endTime     String?
+  organizer   String?
+  venue       String?
+  location    String?
+  status      String    @default("upcoming")
+  isPublished Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  registrations EventRegistration[]
+}
+
+model EventRegistration {
+  id        String   @id @default(cuid())
+  eventSlug String
+  fullName  String
+  email     String
+  phone     String?
+  message   String?
+  createdAt DateTime @default(now())
+
+  event Event @relation(fields: [eventSlug], references: [slug])
+
+  @@unique([eventSlug, email])
+}
+
+model GalleryItem {
+  id           String   @id @default(cuid())
+  title        String
+  type         String // image or video
+  imageUrl     String?
+  videoUrl     String?
+  thumbnailUrl String?
+  publicId     String?
+  category     String?
+  format       String?
+  sizeBytes    Int?
+  width        Int?
+  height       Int?
+  duration     Float?
+  altText      String?
+  isPublished  Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model CommunityGroup {
+  id          String   @id @default(cuid())
+  name        String
+  description String
+  image       String?
+  contact     String?
+  createdAt   DateTime @default(now())
+}
+
+model MembershipApplication {
+  id            String   @id @default(cuid())
+  name          String
+  email         String
+  contactNumber String
+  addressLine1  String
+  city          String
+  country       String
+  message       String?
+  status        String   @default("PENDING") // PENDING, APPROVED, REJECTED
+  createdAt     DateTime @default(now())
+}
+
+model DonationCampaign {
+  id            String   @id @default(cuid())
+  title         String
+  slug          String   @unique
+  description   String
+  image         String
+  goalAmount    Float
+  raisedAmount  Float    @default(0)
+  donationCount Int      @default(0)
+  isPublished   Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  donations Donation[]
+}
+
+model Donation {
+  id            String   @id @default(cuid())
+  campaignSlug  String
+  campaignTitle String
+  amount        Float
+  fullName      String
+  email         String
+  phone         String?
+  address       String?
+  message       String?
+  paymentMethod String
+  status        String   @default("pending")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  campaign DonationCampaign @relation(fields: [campaignSlug], references: [slug])
+}
+
+model MonthlyDonation {
+  id            String    @id @default(cuid())
+  fullName      String
+  email         String
+  amount        Float
+  startDate     DateTime?
+  paymentMethod String
+  message       String?
+  status        String    @default("pending")
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model NewsletterSubscriber {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ContactMessage {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  phone     String?
+  subject   String?
+  message   String
+  status    String   @default("new")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model AfricanGroupApplication {
+  id                    String   @id @default(cuid())
+  fullName              String
+  emailAddress          String
+  contactNumber         String
+  communityGroupName    String
+  communityGroupAddress String
+  message               String?
+  status                String   @default("pending")
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+}
+
+model ServiceComment {
+  id          String   @id @default(cuid())
+  serviceSlug String
+  name        String
+  email       String
+  comment     String
+  status      String   @default("pending")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model SiteSetting {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model BbamListing {
+  id          String   @id @default(cuid())
+  name        String
+  category    String // "ARTIST", "MUSICIAN", "BUSINESS", "PROFESSIONAL"
+  description String
+  image       String?
+  contact     String?
+  createdAt   DateTime @default(now())
+}
+
+model DirectoryListing {
+  id          String   @id @default(cuid())
+  type        String
+  title       String
+  slug        String   @unique
+  description String   @db.Text
+  image       String?
+  gallery     Json?
+  category    String?
+  email       String?
+  phone       String?
+  website     String?
+  socialUrl   String?
+  isPublished Boolean  @default(true)
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([type, isPublished, order])
+}
+
+model ActivityLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  action    String
+  entity    String
+  entityId  String?
+  message   String
+  metadata  Json?
+  ipAddress String?
+  createdAt DateTime @default(now())
+}
+
+model MediaItem {
+  id        String   @id @default(cuid())
+  title     String
+  url       String   @unique
+  type      String // "image" or "video"
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

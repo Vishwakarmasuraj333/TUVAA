@@ -1,0 +1,21 @@
+CREATE TABLE `DirectoryListing` (
+  `id` VARCHAR(191) NOT NULL,
+  `type` VARCHAR(191) NOT NULL,
+  `title` VARCHAR(191) NOT NULL,
+  `slug` VARCHAR(191) NOT NULL,
+  `description` TEXT NOT NULL,
+  `image` VARCHAR(191) NULL,
+  `gallery` JSON NULL,
+  `category` VARCHAR(191) NULL,
+  `email` VARCHAR(191) NULL,
+  `phone` VARCHAR(191) NULL,
+  `website` VARCHAR(191) NULL,
+  `socialUrl` VARCHAR(191) NULL,
+  `isPublished` BOOLEAN NOT NULL DEFAULT true,
+  `order` INTEGER NOT NULL DEFAULT 0,
+  `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+  `updatedAt` DATETIME(3) NOT NULL,
+  UNIQUE INDEX `DirectoryListing_slug_key`(`slug`),
+  INDEX `DirectoryListing_type_isPublished_order_idx`(`type`, `isPublished`, `order`),
+  PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;

@@ -1,0 +1,9 @@
+-- AlterTable
+ALTER TABLE `galleryitem` ADD COLUMN `altText` VARCHAR(191) NULL,
+    ADD COLUMN `duration` DOUBLE NULL,
+    ADD COLUMN `format` VARCHAR(191) NULL,
+    ADD COLUMN `height` INTEGER NULL,
+    ADD COLUMN `publicId` VARCHAR(191) NULL,
+    ADD COLUMN `sizeBytes` INTEGER NULL,
+    ADD COLUMN `width` INTEGER NULL,
+    MODIFY `imageUrl` VARCHAR(191) NULL;

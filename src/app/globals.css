@@ -1,0 +1,182 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme {
+  --color-gold-50: #fefcf3;
+  --color-gold-100: #fdf7e1;
+  --color-gold-200: #fbecbe;
+  --color-gold-300: #f7db91;
+  --color-gold-400: #f3c25b;
+  --color-gold-500: #e9ab2d;
+  --color-gold-600: #c9881d;
+  --color-gold-700: #a76918;
+  --color-gold-800: #885016;
+  --color-gold-900: #6f4115;
+  --color-gold-950: #3f2108;
+
+  --color-sunset-50: #fffbf7;
+  --color-sunset-100: #fff4ea;
+  --color-sunset-200: #ffe5d0;
+  --color-sunset-300: #ffcca6;
+  --color-sunset-400: #ffa671;
+  --color-sunset-500: #ff7e3d;
+  --color-sunset-600: #f35d1f;
+  --color-sunset-700: #ca4418;
+  --color-sunset-800: #a13618;
+  --color-sunset-900: #822e17;
+
+  --font-cinzel: var(--font-cinzel);
+  --font-roboto: var(--font-roboto-slab);
+
+  --animate-ken-burns: ken-burns 20s ease-out infinite alternate;
+}
+
+@keyframes ken-burns {
+  0% {
+    transform: scale(1) translate(0, 0);
+  }
+  100% {
+    transform: scale(1.15) translate(-1%, -1%);
+  }
+}
+
+:root {
+  --background: #0d0905;
+  --foreground: #f5f0eb;
+  --font-cinzel: 'Cinzel', serif;
+  --font-roboto-slab: 'Roboto Slab', serif;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-roboto-slab), system-ui, sans-serif;
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4, h5, h6, .font-cinzel {
+  font-family: var(--font-cinzel), serif;
+  letter-spacing: 0.05em;
+}
+
+/* Glassmorphism Styles */
+.glass-panel {
+  background: rgba(13, 9, 5, 0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(233, 171, 45, 0.15);
+}
+
+.glass-panel-hover {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-panel-hover:hover {
+  background: rgba(13, 9, 5, 0.85);
+  border-color: rgba(233, 171, 45, 0.4);
+  box-shadow: 0 10px 30px -10px rgba(233, 171, 45, 0.15);
+  transform: translateY(-4px);
+}
+
+/* Scrollbar Customization */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0d0905;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #e9ab2d;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #c9881d;
+}
+
+/* Custom overlay background */
+.sunset-overlay {
+  background: linear-gradient(to bottom, rgba(13, 9, 5, 0.4) 0%, rgba(13, 9, 5, 0.85) 70%, #0d0905 100%);
+}
+
+.sunset-glow {
+  box-shadow: 0 0 40px rgba(233, 171, 45, 0.15);
+}
+
+/* Light theme utility classes */
+:root {
+  --bg-light: #FAFAFA;
+  --fg-charcoal: #2D2D2D;
+  --accent-gold: #DB9E30;
+}
+.text-charcoal { color: var(--fg-charcoal); }
+.bg-light { background-color: var(--bg-light); }
+.border-beige { border-color: rgba(219,158,48,0.2); }
+.shadow-soft { box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
+.form-card { background: #ffffff; border: 1px solid rgba(219,158,48,0.2); border-radius: 0.5rem; padding: 2rem; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
+
+/* ── Premium Button Hover: Left-to-Right Slide ── */
+.btn-primary-hover {
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+  background-color: #DB9E30;
+  color: #ffffff;
+  transition: transform 0.4s ease, box-shadow 0.4s ease, color 0.4s ease;
+}
+
+.btn-primary-hover::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-color: #57a68f;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.4s ease;
+}
+
+.btn-primary-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(87, 166, 143, 0.35);
+}
+
+.btn-primary-hover:hover::before {
+  transform: scaleX(1);
+}
+
+/* Disabled state: no hover effects */
+.btn-primary-hover:disabled,
+.btn-primary-hover:disabled:hover {
+  transform: none;
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+.btn-primary-hover:disabled::before,
+.btn-primary-hover:disabled:hover::before {
+  transform: scaleX(0);
+}
+
+/* Active press feedback */
+.btn-primary-hover:active:not(:disabled) {
+  transform: translateY(0) scale(0.98);
+}
+
+.admin-directory-input {
+  width: 100%;
+  border: 1px solid #e8dfc8;
+  border-radius: 2px;
+  background: #fdfcfb;
+  padding: 0.7rem 0.8rem;
+  color: #35170f;
+  font-size: 0.75rem;
+  outline: none;
+}
+
+.admin-directory-input:focus {
+  border-color: #DB9E30;
+  box-shadow: 0 0 0 2px rgba(219, 158, 48, 0.12);
+}
