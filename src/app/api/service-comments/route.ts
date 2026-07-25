@@ -1,21 +1,37 @@
 import { NextResponse } from 'next/server'
 import { z } from 'zod'
 import { prisma } from '@/lib/prisma'
+import { Prisma } from '@prisma/client'
 
 const commentSchema = z.object({
   serviceSlug: z.string().min(1, 'Service identifier is required'),
   name: z.string().min(1, 'Name is required'),
   email: z.string().email('Valid email is required'),
   comment: z.string().min(1, 'Comment is required'),
-  mathAnswer: z.string().refine((val) => val.trim() === '4', {
-    message: 'Math answer must be 4',
-  }),
-  acceptedPrivacy: z.boolean().refine((val) => val === true, {
-    message: 'Privacy policy must be accepted',
-  }),
+  mathAnswer: z.string().optional(),
+  acceptedPrivacy: z.boolean().optional(),
   saveInfo: z.boolean().optional(),
   honeypot: z.string().optional(),
+  recaptchaToken: z.string().optional(),
 })
+
+async function verifyRecaptcha(token: string) {
+  const secretKey = process.env.RECAPTCHA_SECRET_KEY
+  if (!secretKey || secretKey.includes('placeholder')) return true
+
+  try {
+    const res = await fetch('https://www.google.com/recaptcha/api/siteverify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: `secret=${secretKey}&response=${token}`,
+    })
+    const data = await res.json()
+    return data.success && (data.score === undefined || data.score >= 0.5)
+  } catch (err) {
+    console.error('reCAPTCHA verification error:', err)
+    return true
+  }
+}
 
 export async function POST(request: Request) {
   try {
@@ -24,39 +40,88 @@ export async function POST(request: Request) {
     // 1. Honeypot check (Spam protection)
     if (body.honeypot && body.honeypot.trim() !== '') {
       console.log('Spam comment detected via honeypot field')
-      return NextResponse.json({ success: true, message: 'Comment submitted successfully' })
+      return NextResponse.json({ success: true, message: 'Comment submitted successfully and is awaiting approval.' })
     }
 
     // 2. Validate payload with Zod
     const parsed = commentSchema.safeParse(body)
     if (!parsed.success) {
       return NextResponse.json(
-        { error: 'validation_error', message: 'Please fill all required fields correctly.' },
+        { success: false, message: parsed.error.issues[0]?.message || 'Please fill all required fields correctly.' },
         { status: 400 }
       )
     }
 
-    const { serviceSlug, name, email, comment } = parsed.data
+    const { serviceSlug, name, email, comment, recaptchaToken } = parsed.data
 
-    // 3. Save the comment to the database using Prisma Client
+    // 3. reCAPTCHA check if provided
+    if (recaptchaToken) {
+      const isValidCaptcha = await verifyRecaptcha(recaptchaToken)
+      if (!isValidCaptcha) {
+        return NextResponse.json(
+          { success: false, message: 'Captcha verification failed. Please try again.' },
+          { status: 400 }
+        )
+      }
+    }
+
+    const normalizedEmail = email.toLowerCase().trim()
+
+    // 4. Check for duplicate comment for this serviceSlug + email
+    const existingComment = await prisma.serviceComment.findUnique({
+      where: {
+        serviceSlug_email: {
+          serviceSlug,
+          email: normalizedEmail,
+        },
+      },
+    })
+
+    if (existingComment) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: 'You have already submitted a comment for this service.',
+        },
+        { status: 409 }
+      )
+    }
+
+    // 5. Save the comment
     const savedComment = await prisma.serviceComment.create({
       data: {
         serviceSlug,
-        name,
-        email,
-        comment,
-        status: 'pending', // Default status
+        name: name.trim(),
+        email: normalizedEmail,
+        comment: comment.trim(),
+        status: 'pending',
       },
     })
 
     return NextResponse.json(
-      { success: true, message: 'Comment submitted successfully', comment: savedComment },
+      {
+        success: true,
+        message: 'Comment submitted successfully and is awaiting approval.',
+        comment: savedComment,
+      },
       { status: 201 }
     )
-  } catch (error) {
+  } catch (error: any) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      if (error.code === 'P2002') {
+        return NextResponse.json(
+          {
+            success: false,
+            message: 'You have already submitted a comment for this service.',
+          },
+          { status: 409 }
+        )
+      }
+    }
+
     console.error('Error in service comments API:', error)
     return NextResponse.json(
-      { error: 'internal_error', message: 'Something went wrong. Please try again.' },
+      { success: false, message: 'Something went wrong. Please try again later.' },
       { status: 500 }
     )
   }

@@ -68,15 +68,16 @@ export default function ServiceCommentForm({ serviceSlug }: ServiceCommentFormPr
         }),
       })
 
-      if (response.ok) {
-        toast.success('Comment submitted successfully and is awaiting moderation.')
+      const resData = await response.json()
+
+      if (response.ok && resData.success !== false) {
+        toast.success(resData.message || 'Comment submitted successfully and is awaiting approval.')
         reset()
       } else {
-        const errorData = await response.json()
-        toast.error(errorData.message || 'Please fill all required fields correctly.')
+        toast.error(resData.message || 'Please fill all required fields correctly.')
       }
     } catch (error) {
-      toast.error('Something went wrong. Please try again.')
+      toast.error('Something went wrong. Please try again later.')
     } finally {
       setIsSubmitting(false)
     }

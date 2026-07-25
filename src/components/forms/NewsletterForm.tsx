@@ -54,14 +54,11 @@ export default function NewsletterForm() {
       const resData = await response.json()
 
       if (!response.ok) {
-        if (response.status === 409) {
-          toast.info('You are already subscribed.')
-          return
-        }
-        throw new Error(resData.message || 'Something went wrong. Please try again.')
+        toast.error(resData.message || 'This email is already subscribed.')
+        return
       }
 
-      toast.success('Thank you for subscribing!')
+      toast.success(resData.message || 'Thank you for subscribing!')
       reset()
     } catch (error: any) {
       toast.error(error.message || 'Something went wrong. Please try again.')

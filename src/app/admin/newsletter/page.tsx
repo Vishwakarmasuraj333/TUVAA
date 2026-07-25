@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Send, Trash2, Download, Loader2 } from 'lucide-react'
+import { Send, Trash2, Download, Loader2, ShieldAlert } from 'lucide-react'
 import { toast } from 'sonner'
 import ConfirmDeleteDialog from '@/components/admin/ConfirmDeleteDialog'
 import { formatDate } from '@/lib/utils'
@@ -15,19 +15,30 @@ interface Subscriber {
 export default function AdminNewsletterPage() {
   const [subscribers, setSubscribers] = useState<Subscriber[]>([])
   const [loading, setLoading] = useState(true)
+  const [currentUser, setCurrentUser] = useState<any>(null)
 
   // Dialog state
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [itemToDelete, setItemToDelete] = useState<string | null>(null)
   const [isDeleting, setIsDeleting] = useState(false)
 
-  const fetchSubscribers = async () => {
+  const isTester = currentUser?.role === 'tester'
+
+  const fetchAuthAndSubscribers = async () => {
     setLoading(true)
     try {
+      const meRes = await fetch('/api/admin/auth/me')
+      if (meRes.ok) {
+        const meData = await meRes.json()
+        setCurrentUser(meData.user)
+      }
+
       const res = await fetch('/api/admin/newsletter')
       if (res.ok) {
         const data = await res.json()
         setSubscribers(data)
+      } else {
+        toast.error('Failed to load subscribers')
       }
     } catch (e) {
       toast.error('Failed to load subscribers')
@@ -37,10 +48,14 @@ export default function AdminNewsletterPage() {
   }
 
   useEffect(() => {
-    fetchSubscribers()
+    fetchAuthAndSubscribers()
   }, [])
 
-  const handleDelete = async (id: string) => {
+  const handleDeleteClick = (id: string) => {
+    if (isTester) {
+      toast.error('Read-only users cannot perform this action.')
+      return
+    }
     setItemToDelete(id)
     setDeleteDialogOpen(true)
   }
@@ -50,17 +65,19 @@ export default function AdminNewsletterPage() {
     setIsDeleting(true)
 
     try {
-      const res = await fetch(`/api/admin/newsletter?id=${itemToDelete}`, {
+      const res = await fetch(`/api/admin/newsletter/${itemToDelete}`, {
         method: 'DELETE',
       })
-      if (res.ok) {
-        toast.success('Subscriber removed successfully')
-        fetchSubscribers()
+      const data = await res.json()
+
+      if (res.ok && data.success !== false) {
+        toast.success(data.message || 'Subscriber deleted successfully')
+        setSubscribers(subscribers.filter((s) => s.id !== itemToDelete))
       } else {
-        throw new Error('Delete failed')
+        toast.error(data.message || 'Failed to delete subscriber')
       }
     } catch (e) {
-      toast.error('Failed to remove subscriber')
+      toast.error('Failed to delete subscriber')
     } finally {
       setIsDeleting(false)
       setDeleteDialogOpen(false)
@@ -73,7 +90,6 @@ export default function AdminNewsletterPage() {
       return
     }
 
-    // Generate CSV contents
     const headers = 'ID,Email,SubscribedAt\n'
     const rows = subscribers
       .map((s) => `"${s.id}","${s.email}","${s.createdAt}"`)
@@ -96,12 +112,19 @@ export default function AdminNewsletterPage() {
           </h1>
           <p className="text-xs text-white/55 mt-1">Manage email listings subscribed to TUVAA newsletters.</p>
         </div>
-        <button
-          onClick={handleExportCSV}
-          className="flex items-center gap-1.5 bg-gold-600 hover:bg-gold-500 text-[#0d0905] font-cinzel font-bold text-xs uppercase tracking-widest px-4 py-2.5 rounded shadow transition-all active:scale-95 cursor-pointer"
-        >
-          <Download className="h-4 w-4" /> Export CSV
-        </button>
+        <div className="flex items-center gap-3">
+          {isTester && (
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-500/10 border border-amber-500/20 text-amber-400 font-cinzel text-xs font-bold uppercase tracking-widest rounded-sm">
+              <ShieldAlert className="w-3.5 h-3.5" /> Read Only Mode
+            </span>
+          )}
+          <button
+            onClick={handleExportCSV}
+            className="flex items-center gap-1.5 bg-gold-600 hover:bg-gold-500 text-[#0d0905] font-cinzel font-bold text-xs uppercase tracking-widest px-4 py-2.5 rounded shadow transition-all active:scale-95 cursor-pointer"
+          >
+            <Download className="h-4 w-4" /> Export CSV
+          </button>
+        </div>
       </div>
 
       {loading ? (
@@ -124,13 +147,19 @@ export default function AdminNewsletterPage() {
                   <td className="p-4 font-semibold text-white tracking-wide">{sub.email}</td>
                   <td className="p-4">{formatDate(sub.createdAt)}</td>
                   <td className="p-4 text-center flex items-center justify-center">
-                    <button
-                      onClick={() => handleDelete(sub.id)}
-                      className="p-1.5 bg-sunset-600/10 hover:bg-sunset-600 text-sunset-500 hover:text-white border border-sunset-500/20 rounded transition-all cursor-pointer"
-                      title="Remove subscriber"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </button>
+                    {isTester ? (
+                      <span className="text-[10px] font-cinzel font-bold text-zinc-400 uppercase tracking-widest italic">
+                        Read only
+                      </span>
+                    ) : (
+                      <button
+                        onClick={() => handleDeleteClick(sub.id)}
+                        className="p-1.5 bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white border border-red-500/20 rounded transition-all cursor-pointer"
+                        title="Remove subscriber"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    )}
                   </td>
                 </tr>
               ))}
@@ -147,7 +176,7 @@ export default function AdminNewsletterPage() {
         isOpen={deleteDialogOpen}
         onClose={() => setDeleteDialogOpen(false)}
         onConfirm={executeDelete}
-        title="Confirm Deletion"
+        title="Delete Subscriber"
         description="Are you sure you want to remove this subscriber? This action cannot be undone."
         isLoading={isDeleting}
       />

@@ -1,36 +1,49 @@
 import { NextResponse } from 'next/server'
-import { PrismaClient } from '@prisma/client'
-import { getSession, hasRole } from '@/lib/auth'
+import { prisma } from '@/lib/prisma'
+import { getSession } from '@/lib/session'
+import { logActivity } from '@/lib/activity-log'
+import { Prisma } from '@prisma/client'
 
-const prisma = new PrismaClient()
+export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
+  const session = await getSession()
+  if (!session) {
+    return NextResponse.json({ success: false, message: 'Unauthorized' }, { status: 401 })
+  }
+  if (session.role === 'tester') {
+    return NextResponse.json({ success: false, message: 'Read-only users cannot perform this action.' }, { status: 403 })
+  }
 
-export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
+
   try {
-    const session = await getSession()
-    if (!hasRole(session, ['super_admin', 'admin'])) {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
-    }
-
-    const { id } = await params
-
-    const subscriber = await prisma.newsletterSubscriber.findUnique({ where: { id } })
-    if (!subscriber) return NextResponse.json({ error: 'Not found' }, { status: 404 })
-
-    await prisma.newsletterSubscriber.delete({ where: { id } })
-
-    await prisma.activityLog.create({
-      data: {
-        userId: session!.id,
-        action: 'DELETE',
-        entity: 'NewsletterSubscriber',
-        entityId: id,
-        message: `Deleted newsletter subscriber: ${subscriber.email}`,
-        ipAddress: request.headers.get('x-forwarded-for') || 'Unknown',
-      }
+    const subscriber = await prisma.newsletterSubscriber.findUnique({
+      where: { id },
     })
 
-    return NextResponse.json({ success: true })
-  } catch (error) {
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
+    if (!subscriber) {
+      return NextResponse.json({ success: false, message: 'Subscriber not found.' }, { status: 404 })
+    }
+
+    await prisma.newsletterSubscriber.delete({
+      where: { id },
+    })
+
+    const ipAddress = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip')
+    await logActivity({
+      userId: session.id,
+      action: 'DELETE_NEWSLETTER_SUBSCRIBER',
+      entity: 'NEWSLETTER',
+      entityId: id,
+      message: `Deleted newsletter subscriber: ${subscriber.email}`,
+      ipAddress,
+    })
+
+    return NextResponse.json({ success: true, message: 'Subscriber deleted successfully.' })
+  } catch (error: any) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
+      return NextResponse.json({ success: false, message: 'Subscriber not found.' }, { status: 404 })
+    }
+    console.error('API newsletter delete error:', error)
+    return NextResponse.json({ success: false, message: 'Failed to delete subscriber.' }, { status: 500 })
   }
 }

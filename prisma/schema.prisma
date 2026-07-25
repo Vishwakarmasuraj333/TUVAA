@@ -232,10 +232,12 @@ model ServiceComment {
   serviceSlug String
   name        String
   email       String
-  comment     String
+  comment     String   @db.Text
   status      String   @default("pending")
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  @@unique([serviceSlug, email])
 }
 
 model SiteSetting {

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { ArrowLeft, Search, Check, X, Trash2, Loader2 } from 'lucide-react'
+import { ArrowLeft, Search, Check, X, Trash2, Loader2, ShieldAlert } from 'lucide-react'
 import { toast } from 'sonner'
 import ConfirmDeleteDialog from '@/components/admin/ConfirmDeleteDialog'
 
@@ -14,7 +14,7 @@ interface ServiceComment {
   comment: string
   status: string
   createdAt: string
-  service: {
+  service?: {
     title: string
   }
 }
@@ -23,31 +23,48 @@ export default function AdminServiceCommentsPage() {
   const [comments, setComments] = useState<ServiceComment[]>([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
+  const [currentUser, setCurrentUser] = useState<any>(null)
 
   // Dialog state
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [itemToDelete, setItemToDelete] = useState<string | null>(null)
   const [isDeleting, setIsDeleting] = useState(false)
 
-  const fetchComments = async () => {
+  const isTester = currentUser?.role === 'tester'
+
+  const fetchAuthAndComments = async () => {
     try {
+      const meRes = await fetch('/api/admin/auth/me')
+      if (meRes.ok) {
+        const meData = await meRes.json()
+        setCurrentUser(meData.user)
+      }
+
       const res = await fetch('/api/admin/service-comments')
       if (res.ok) {
         const data = await res.json()
         setComments(data)
+      } else {
+        toast.error('Failed to load service comments')
       }
     } catch (error) {
       console.error('Error fetching comments:', error)
+      toast.error('Error loading service comments')
     } finally {
       setLoading(false)
     }
   }
 
   useEffect(() => {
-    fetchComments()
+    fetchAuthAndComments()
   }, [])
 
   const handleUpdateStatus = async (id: string, newStatus: string) => {
+    if (isTester) {
+      toast.error('Read-only users cannot perform this action.')
+      return
+    }
+
     try {
       const res = await fetch(`/api/admin/service-comments/${id}`, {
         method: 'PATCH',
@@ -55,22 +72,27 @@ export default function AdminServiceCommentsPage() {
         body: JSON.stringify({ status: newStatus }),
       })
 
-      if (res.ok) {
-        toast.success(`Comment status updated to ${newStatus}`)
+      const data = await res.json()
+
+      if (res.ok && data.success !== false) {
+        toast.success(data.message || `Comment ${newStatus} successfully`)
         setComments(
           comments.map((c) => (c.id === id ? { ...c, status: newStatus } : c))
         )
       } else {
-        const data = await res.json()
         toast.error(data.message || 'Failed to update status')
       }
     } catch (e) {
       console.error(e)
-      toast.error('Error updating status')
+      toast.error('Error updating comment status')
     }
   }
 
-  const handleDelete = async (id: string) => {
+  const handleDeleteClick = (id: string) => {
+    if (isTester) {
+      toast.error('Read-only users cannot perform this action.')
+      return
+    }
     setItemToDelete(id)
     setDeleteDialogOpen(true)
   }
@@ -84,11 +106,12 @@ export default function AdminServiceCommentsPage() {
         method: 'DELETE',
       })
 
-      if (res.ok) {
-        toast.success('Comment deleted successfully')
+      const data = await res.json()
+
+      if (res.ok && data.success !== false) {
+        toast.success(data.message || 'Comment deleted successfully')
         setComments(comments.filter((c) => c.id !== itemToDelete))
       } else {
-        const data = await res.json()
         toast.error(data.message || 'Failed to delete comment')
       }
     } catch (e) {
@@ -104,7 +127,8 @@ export default function AdminServiceCommentsPage() {
     (c) =>
       c.name.toLowerCase().includes(search.toLowerCase()) ||
       c.email.toLowerCase().includes(search.toLowerCase()) ||
-      c.comment.toLowerCase().includes(search.toLowerCase())
+      c.comment.toLowerCase().includes(search.toLowerCase()) ||
+      c.serviceSlug.toLowerCase().includes(search.toLowerCase())
   )
 
   return (
@@ -117,9 +141,16 @@ export default function AdminServiceCommentsPage() {
         >
           <ArrowLeft className="h-3.5 w-3.5" /> Dashboard
         </Link>
-        <h1 className="font-cinzel text-2xl sm:text-3xl font-extrabold text-[#35170f] dark:text-white uppercase tracking-wider">
-          Service Comments
-        </h1>
+        <div className="flex items-center justify-between">
+          <h1 className="font-cinzel text-2xl sm:text-3xl font-extrabold text-[#35170f] dark:text-white uppercase tracking-wider">
+            Service Comments
+          </h1>
+          {isTester && (
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-400 font-cinzel text-xs font-bold uppercase tracking-widest rounded-sm">
+              <ShieldAlert className="w-3.5 h-3.5" /> Read Only Mode
+            </span>
+          )}
+        </div>
       </div>
 
       {/* Search & Stats bar */}
@@ -135,7 +166,7 @@ export default function AdminServiceCommentsPage() {
           />
         </div>
         <div className="text-xs font-cinzel font-bold text-[#8b8178] dark:text-white/60 uppercase tracking-wider">
-          Total: <span className="text-[#35170f] dark:text-gold-500">{filtered.length}</span> Comments
+          Total: <span className="text-[#35170f] dark:text-[#DB9E30]">{filtered.length}</span> Comments
         </div>
       </div>
 
@@ -163,48 +194,63 @@ export default function AdminServiceCommentsPage() {
                     <p className="font-bold text-[#35170f] dark:text-white">{c.name}</p>
                     <p className="text-[10px] text-[#8b8178] dark:text-white/50">{c.email}</p>
                   </td>
-                  <td className="p-4 font-bold text-[#35170f] dark:text-white truncate max-w-[120px]">
+                  <td className="p-4 font-bold text-[#35170f] dark:text-white truncate max-w-[140px]">
                     {c.service?.title || c.serviceSlug}
                   </td>
                   <td className="p-4 max-w-sm whitespace-pre-line text-[#8b8178] dark:text-white/60">{c.comment}</td>
                   <td className="p-4">
                     <span
                       className={`inline-block text-[9px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-sm border ${
-                        c.status === 'approved' && 'bg-[#57a68f]/10 border-[#57a68f]/20 text-[#42816f]'
+                        c.status === 'approved'
+                          ? 'bg-[#57a68f]/10 border-[#57a68f]/20 text-[#42816f] dark:text-[#57a68f]'
+                          : ''
                       } ${
-                        c.status === 'pending' && 'bg-amber-500/10 border-amber-500/20 text-amber-600'
+                        c.status === 'pending'
+                          ? 'bg-amber-500/10 border-amber-500/20 text-amber-600 dark:text-amber-400'
+                          : ''
                       } ${
-                        c.status === 'rejected' && 'bg-red-500/10 border-red-500/20 text-red-500'
+                        c.status === 'rejected'
+                          ? 'bg-red-500/10 border-red-500/20 text-red-500 dark:text-red-400'
+                          : ''
                       }`}
                     >
                       {c.status}
                     </span>
                   </td>
                   <td className="p-4 text-right">
-                    <div className="flex items-center justify-end gap-2">
-                      {c.status === 'pending' && (
-                        <>
+                    {isTester ? (
+                      <span className="text-[10px] font-cinzel font-bold text-zinc-400 uppercase tracking-widest italic">
+                        Read only
+                      </span>
+                    ) : (
+                      <div className="flex items-center justify-end gap-2">
+                        {c.status !== 'approved' && (
                           <button
                             onClick={() => handleUpdateStatus(c.id, 'approved')}
                             className="p-2 bg-[#57a68f]/10 hover:bg-[#57a68f]/20 border border-[#57a68f]/20 text-[#42816f] rounded-sm transition-colors cursor-pointer"
+                            title="Approve Comment"
                           >
                             <Check className="h-3.5 w-3.5" />
                           </button>
+                        )}
+                        {c.status !== 'rejected' && (
                           <button
                             onClick={() => handleUpdateStatus(c.id, 'rejected')}
                             className="p-2 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/20 text-amber-600 rounded-sm transition-colors cursor-pointer"
+                            title="Reject Comment"
                           >
                             <X className="h-3.5 w-3.5" />
                           </button>
-                        </>
-                      )}
-                      <button
-                        onClick={() => handleDelete(c.id)}
-                        className="p-2 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-red-500 rounded-sm transition-colors cursor-pointer"
-                      >
-                        <Trash2 className="h-3.5 w-3.5" />
-                      </button>
-                    </div>
+                        )}
+                        <button
+                          onClick={() => handleDeleteClick(c.id)}
+                          className="p-2 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-red-500 rounded-sm transition-colors cursor-pointer"
+                          title="Delete Comment"
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </button>
+                      </div>
+                    )}
                   </td>
                 </tr>
               ))}
@@ -221,7 +267,7 @@ export default function AdminServiceCommentsPage() {
         isOpen={deleteDialogOpen}
         onClose={() => setDeleteDialogOpen(false)}
         onConfirm={executeDelete}
-        title="Confirm Deletion"
+        title="Delete Comment"
         description="Are you sure you want to delete this comment? This action cannot be undone."
         isLoading={isDeleting}
       />
