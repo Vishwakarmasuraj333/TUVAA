@@ -46,7 +46,11 @@ export default function AdminNewGalleryPage() {
   const [commonAltText, setCommonAltText] = useState<string>('')
   const [publishImmediately, setPublishImmediately] = useState<boolean>(true)
   const [isUploading, setIsUploading] = useState<boolean>(false)
-  const [uploadProgress, setUploadProgress] = useState<{ current: number; total: number }>({ current: 0, total: 0 })
+  const [uploadProgress, setUploadProgress] = useState<{ current: number; total: number; currentFileName: string }>({
+    current: 0,
+    total: 0,
+    currentFileName: '',
+  })
 
   // External URL Mode State
   const [extTitle, setExtTitle] = useState('')
@@ -72,7 +76,7 @@ export default function AdminNewGalleryPage() {
       .finally(() => setLoadingAuth(false))
   }, [])
 
-  // Helper to format file size
+  // Format bytes
   const formatBytes = (bytes: number) => {
     if (bytes === 0) return '0 B'
     const k = 1024
@@ -92,7 +96,6 @@ export default function AdminNewGalleryPage() {
       const isVideo = file.type.startsWith('video/')
       const detectedType: 'image' | 'video' = isVideo ? 'video' : 'image'
 
-      // Generate clean title from filename (e.g. bbam-festival-culture.jpg -> BBAM Festival Culture)
       const cleanTitle = file.name
         .replace(/\.[^/.]+$/, '')
         .replace(/[-_]+/g, ' ')
@@ -139,7 +142,7 @@ export default function AdminNewGalleryPage() {
     setSelectedFiles((prev) => prev.map((item) => ({ ...item, category: cat })))
   }
 
-  // Submit Upload Mode
+  // File-by-file upload queue to avoid Vercel 4.5MB payload limit
   const handleUploadAll = async () => {
     if (isTester) {
       toast.error('Read-only users cannot perform this action.')
@@ -152,64 +155,88 @@ export default function AdminNewGalleryPage() {
     }
 
     setIsUploading(true)
-    setUploadProgress({ current: 0, total: selectedFiles.length })
+    const totalFiles = selectedFiles.length
+    let successCount = 0
+    let failedCount = 0
 
-    const formData = new FormData()
-    const metadataList: any[] = []
+    for (let i = 0; i < totalFiles; i++) {
+      const currentItem = selectedFiles[i]
 
-    selectedFiles.forEach((item) => {
-      formData.append('files', item.file)
-      metadataList.push({
-        title: item.title,
-        type: item.type,
-        category: item.category,
-        altText: item.altText,
-        isPublished: publishImmediately,
-      })
-    })
-
-    formData.append('metadata', JSON.stringify(metadataList))
-
-    try {
-      // Set status to uploading
-      setSelectedFiles((prev) => prev.map((i) => ({ ...i, status: 'uploading' })))
-
-      const res = await fetch('/api/admin/gallery/bulk-upload', {
-        method: 'POST',
-        body: formData,
+      // Update progress state
+      setUploadProgress({
+        current: i + 1,
+        total: totalFiles,
+        currentFileName: currentItem.title,
       })
 
-      const data = await res.json()
+      // Update item status in list to uploading
+      setSelectedFiles((prev) =>
+        prev.map((item) => (item.id === currentItem.id ? { ...item, status: 'uploading' } : item))
+      )
 
-      if (res.ok && data.success) {
-        toast.success(data.message || 'Gallery items uploaded successfully.')
-        setSelectedFiles((prev) => prev.map((i) => ({ ...i, status: 'uploaded' })))
-        setTimeout(() => {
-          router.push('/admin/gallery')
-          router.refresh()
-        }, 1200)
-      } else {
-        toast.error(data.message || 'Failed to upload gallery items.')
-        if (data.failedItems && Array.isArray(data.failedItems)) {
+      try {
+        const formData = new FormData()
+        formData.append('file', currentItem.file)
+        formData.append('title', currentItem.title)
+        formData.append('type', currentItem.type)
+        formData.append('category', currentItem.category || 'General')
+        formData.append('altText', currentItem.altText || '')
+        formData.append('isPublished', publishImmediately.toString())
+
+        const res = await fetch('/api/admin/gallery/upload', {
+          method: 'POST',
+          body: formData,
+        })
+
+        // Safely parse JSON or text response
+        let resData: any = {}
+        const text = await res.text()
+        try {
+          resData = JSON.parse(text)
+        } catch {
+          resData = { message: res.statusText || 'Server response was not valid JSON.' }
+        }
+
+        if (res.ok && resData.success !== false) {
+          successCount++
           setSelectedFiles((prev) =>
-            prev.map((item) => {
-              const failed = data.failedItems.find((f: any) => f.file === item.file.name)
-              if (failed) {
-                return { ...item, status: 'failed', errorMsg: failed.reason }
-              }
-              return { ...item, status: 'uploaded' }
-            })
+            prev.map((item) => (item.id === currentItem.id ? { ...item, status: 'uploaded' } : item))
           )
         } else {
-          setSelectedFiles((prev) => prev.map((i) => ({ ...i, status: 'failed' })))
+          failedCount++
+          setSelectedFiles((prev) =>
+            prev.map((item) =>
+              item.id === currentItem.id
+                ? { ...item, status: 'failed', errorMsg: resData.message || 'Upload failed.' }
+                : item
+            )
+          )
         }
+      } catch (err: any) {
+        console.error(`Upload failed for ${currentItem.title}:`, err)
+        failedCount++
+        setSelectedFiles((prev) =>
+          prev.map((item) =>
+            item.id === currentItem.id
+              ? { ...item, status: 'failed', errorMsg: err.message || 'Network failure.' }
+              : item
+          )
+        )
       }
-    } catch (error: any) {
-      console.error(error)
-      toast.error(error.message || 'Error executing upload.')
-      setSelectedFiles((prev) => prev.map((i) => ({ ...i, status: 'failed' })))
-    } finally {
-      setIsUploading(false)
+    }
+
+    setIsUploading(false)
+
+    if (successCount === totalFiles) {
+      toast.success(`${successCount} gallery items uploaded successfully.`)
+      setTimeout(() => {
+        router.push('/admin/gallery')
+        router.refresh()
+      }, 1200)
+    } else if (successCount > 0) {
+      toast.error(`${successCount} uploaded, ${failedCount} failed. Please review failed items.`)
+    } else {
+      toast.error('All uploads failed. Please check your network and file sizes.')
     }
   }
 
@@ -251,7 +278,13 @@ export default function AdminNewGalleryPage() {
         body: JSON.stringify(payload),
       })
 
-      const data = await res.json()
+      const text = await res.text()
+      let data: any = {}
+      try {
+        data = JSON.parse(text)
+      } catch {
+        data = { message: 'Server response was not valid JSON.' }
+      }
 
       if (res.ok && data.success !== false) {
         toast.success(data.message || 'Gallery item saved successfully!')
@@ -277,7 +310,7 @@ export default function AdminNewGalleryPage() {
   }
 
   return (
-    <div className="space-y-6 text-left max-w-5xl mx-auto pb-12">
+    <div className="space-y-6 text-left max-w-5xl mx-auto pb-12 font-roboto">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-[#e8dfc8]/50 dark:border-[#2a211a] pb-5">
         <div className="space-y-1">
@@ -328,7 +361,7 @@ export default function AdminNewGalleryPage() {
       {/* MODE 1: BULK FILE UPLOAD */}
       {mode === 'upload' && (
         <div className="space-y-6">
-          {/* Upload Dropzone Box */}
+          {/* Dropzone Box */}
           <div className="bg-white dark:bg-[#17110d] border-2 border-dashed border-[#DB9E30]/40 rounded-sm p-8 sm:p-12 text-center space-y-4 hover:border-[#DB9E30] transition-colors">
             <div className="w-16 h-16 rounded-full bg-[#DB9E30]/10 border border-[#DB9E30]/30 flex items-center justify-center mx-auto text-[#DB9E30]">
               <UploadCloud className="w-8 h-8" />
@@ -371,6 +404,11 @@ export default function AdminNewGalleryPage() {
                   <h4 className="font-cinzel font-bold text-sm text-[#35170f] dark:text-white uppercase tracking-wider">
                     Upload Queue ({selectedFiles.length} item{selectedFiles.length > 1 ? 's' : ''})
                   </h4>
+                  {isUploading && (
+                    <p className="text-xs text-[#DB9E30] font-bold mt-1 animate-pulse">
+                      Uploading {uploadProgress.current} of {uploadProgress.total}: {uploadProgress.currentFileName}
+                    </p>
+                  )}
                 </div>
 
                 <div className="flex flex-wrap items-center gap-4 text-xs">
@@ -381,6 +419,7 @@ export default function AdminNewGalleryPage() {
                     <select
                       value={commonCategory}
                       onChange={(e) => handleApplyCommonCategory(e.target.value)}
+                      disabled={isUploading}
                       className="bg-[#fdfcfb] dark:bg-[#1c1510] border border-[#e8dfc8] dark:border-[#2a211a] text-[#35170f] dark:text-white px-3 py-1.5 rounded text-xs focus:outline-none focus:border-[#DB9E30]"
                     >
                       {CATEGORIES.map((cat) => (
@@ -397,6 +436,7 @@ export default function AdminNewGalleryPage() {
                       id="publishImmediately"
                       checked={publishImmediately}
                       onChange={(e) => setPublishImmediately(e.target.checked)}
+                      disabled={isUploading}
                       className="accent-[#DB9E30] cursor-pointer"
                     />
                     <label
@@ -410,7 +450,7 @@ export default function AdminNewGalleryPage() {
               </div>
 
               {/* Selected Files List */}
-              <div className="space-y-3 max-h-[450px] overflow-y-auto pr-1">
+              <div className="space-y-3 max-h-[480px] overflow-y-auto pr-1">
                 {selectedFiles.map((item) => (
                   <div
                     key={item.id}
@@ -439,6 +479,7 @@ export default function AdminNewGalleryPage() {
                         value={item.title}
                         onChange={(e) => handleUpdateItem(item.id, 'title', e.target.value)}
                         placeholder="Editable Title..."
+                        disabled={isUploading}
                         className="w-full bg-white dark:bg-[#17110d] border border-[#e8dfc8] dark:border-[#2a211a] px-3 py-1.5 rounded font-bold text-[#35170f] dark:text-white focus:border-[#DB9E30] outline-none"
                       />
                       <div className="flex items-center gap-3 text-[10px] text-[#8b8178] dark:text-white/50">
@@ -452,6 +493,7 @@ export default function AdminNewGalleryPage() {
                       <select
                         value={item.category}
                         onChange={(e) => handleUpdateItem(item.id, 'category', e.target.value)}
+                        disabled={isUploading}
                         className="w-full bg-white dark:bg-[#17110d] border border-[#e8dfc8] dark:border-[#2a211a] px-2 py-1.5 rounded text-[#35170f] dark:text-white outline-none"
                       >
                         {CATEGORIES.map((cat) => (
@@ -505,7 +547,9 @@ export default function AdminNewGalleryPage() {
               {/* Progress Bar & Upload Button */}
               <div className="pt-4 border-t border-[#e8dfc8] dark:border-[#2a211a] flex flex-col sm:flex-row justify-between items-center gap-4">
                 <span className="text-xs text-[#8b8178] dark:text-white/60">
-                  Total {selectedFiles.length} file(s) ready to upload.
+                  {isUploading
+                    ? `Uploading ${uploadProgress.current} of ${uploadProgress.total}...`
+                    : `Total ${selectedFiles.length} file(s) ready to upload.`}
                 </span>
 
                 <button
@@ -515,7 +559,9 @@ export default function AdminNewGalleryPage() {
                   className="btn-primary-hover font-cinzel font-bold text-xs uppercase tracking-widest px-8 py-3.5 rounded shadow cursor-pointer disabled:opacity-50 flex items-center gap-2"
                 >
                   {isUploading && <Loader2 className="w-4 h-4 animate-spin" />}
-                  {isUploading ? 'Uploading to Cloudinary & Saving...' : 'Upload & Save All Items'}
+                  {isUploading
+                    ? `Uploading ${uploadProgress.current} of ${uploadProgress.total}...`
+                    : 'Upload & Save All Items'}
                 </button>
               </div>
             </div>
@@ -539,7 +585,6 @@ export default function AdminNewGalleryPage() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-            {/* Title */}
             <div className="space-y-1.5">
               <label className="text-xs font-cinzel font-bold text-[#35170f] dark:text-[#DB9E30] uppercase tracking-wider block">
                 Item Title *
@@ -554,7 +599,6 @@ export default function AdminNewGalleryPage() {
               />
             </div>
 
-            {/* Type */}
             <div className="space-y-1.5">
               <label className="text-xs font-cinzel font-bold text-[#35170f] dark:text-[#DB9E30] uppercase tracking-wider block">
                 Media Type *
@@ -570,7 +614,6 @@ export default function AdminNewGalleryPage() {
             </div>
           </div>
 
-          {/* External URL */}
           <div className="space-y-1.5">
             <label className="text-xs font-cinzel font-bold text-[#35170f] dark:text-[#DB9E30] uppercase tracking-wider block">
               External / Cloudinary Media URL *
@@ -585,7 +628,6 @@ export default function AdminNewGalleryPage() {
             />
           </div>
 
-          {/* If Video: Optional Video URL & Thumbnail */}
           {extType === 'video' && (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               <div className="space-y-1.5">
@@ -615,7 +657,6 @@ export default function AdminNewGalleryPage() {
             </div>
           )}
 
-          {/* Cloudinary Public ID & Category */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <div className="space-y-1.5">
               <label className="text-xs font-cinzel font-bold text-[#35170f] dark:text-[#DB9E30] uppercase tracking-wider block">
@@ -648,7 +689,6 @@ export default function AdminNewGalleryPage() {
             </div>
           </div>
 
-          {/* Alt Text */}
           <div className="space-y-1.5">
             <label className="text-xs font-cinzel font-bold text-[#35170f] dark:text-[#DB9E30] uppercase tracking-wider block">
               Alt Text (Optional)
@@ -662,7 +702,6 @@ export default function AdminNewGalleryPage() {
             />
           </div>
 
-          {/* Publish Checkbox */}
           <div className="flex items-center gap-3 pt-2">
             <input
               type="checkbox"
@@ -679,7 +718,6 @@ export default function AdminNewGalleryPage() {
             </label>
           </div>
 
-          {/* Submit Button */}
           <div className="pt-4">
             <button
               type="submit"
