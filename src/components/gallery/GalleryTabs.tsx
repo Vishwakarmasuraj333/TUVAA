@@ -12,10 +12,10 @@ interface GalleryTabsProps {
   initialItems: DBGalleryItem[]
 }
 
-const ITEMS_PER_PAGE = 9
+const ITEMS_PER_PAGE = 6
 
 export default function GalleryTabs({ initialItems }: GalleryTabsProps) {
-  const [activeTab, setActiveTab] = useState<'all' | 'image' | 'video'>('all')
+  const [activeTab, setActiveTab] = useState<'image' | 'video' | null>(null)
   const [currentPage, setCurrentPage] = useState<number>(1)
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
   const [activeVideo, setActiveVideo] = useState<DBGalleryItem | null>(null)
@@ -23,14 +23,14 @@ export default function GalleryTabs({ initialItems }: GalleryTabsProps) {
   const galleryRef = useRef<HTMLDivElement>(null)
 
   // Filter items based on active tab selection
-  const tabItems = activeTab === 'all' ? initialItems : initialItems.filter((item) => item.type === activeTab)
+  const tabItems = activeTab ? initialItems.filter((item) => item.type === activeTab) : []
 
   // Paginated items calculation
   const totalPages = Math.max(1, Math.ceil(tabItems.length / ITEMS_PER_PAGE))
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE
   const currentPaginatedItems = tabItems.slice(startIndex, startIndex + ITEMS_PER_PAGE)
 
-  const handleTabChange = (tab: 'all' | 'image' | 'video') => {
+  const handleTabChange = (tab: 'image' | 'video') => {
     setActiveTab(tab)
     setCurrentPage(1)
     handleLightboxClose()
@@ -76,29 +76,15 @@ export default function GalleryTabs({ initialItems }: GalleryTabsProps) {
 
   return (
     <div className="w-full" ref={galleryRef}>
-      {/* Centered Tab Selectors */}
+      {/* Centered Tab Selectors matching live tuvaa.org.uk screenshot */}
       <div className="mt-[60px] sm:mt-[90px] flex flex-col items-center select-none px-4">
-        <div className="flex flex-wrap gap-3 sm:gap-6 justify-center z-10">
-          {/* All Tab Button */}
-          <motion.button
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.98 }}
-            onClick={() => handleTabChange('all')}
-            className={`font-cinzel font-bold text-xs sm:text-base uppercase tracking-widest px-6 sm:px-8 py-3.5 sm:py-4 rounded-t-md cursor-pointer transition-colors duration-300 ${
-              activeTab === 'all'
-                ? 'bg-[#DB9E30] text-white shadow-md'
-                : 'bg-[#57a68f] hover:bg-[#57a68f]/90 text-white'
-            }`}
-          >
-            All Items
-          </motion.button>
-
+        <div className="flex gap-4 sm:gap-6 justify-center z-10">
           {/* Images Tab Button */}
           <motion.button
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.98 }}
             onClick={() => handleTabChange('image')}
-            className={`font-cinzel font-bold text-xs sm:text-base uppercase tracking-widest px-6 sm:px-8 py-3.5 sm:py-4 rounded-t-md cursor-pointer transition-colors duration-300 ${
+            className={`font-cinzel font-bold text-sm sm:text-base uppercase tracking-widest px-8 py-4 rounded-t-md cursor-pointer transition-colors duration-300 ${
               activeTab === 'image'
                 ? 'bg-[#DB9E30] text-white shadow-md'
                 : 'bg-[#57a68f] hover:bg-[#57a68f]/90 text-white'
@@ -112,7 +98,7 @@ export default function GalleryTabs({ initialItems }: GalleryTabsProps) {
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.98 }}
             onClick={() => handleTabChange('video')}
-            className={`font-cinzel font-bold text-xs sm:text-base uppercase tracking-widest px-6 sm:px-8 py-3.5 sm:py-4 rounded-t-md cursor-pointer transition-colors duration-300 ${
+            className={`font-cinzel font-bold text-sm sm:text-base uppercase tracking-widest px-8 py-4 rounded-t-md cursor-pointer transition-colors duration-300 ${
               activeTab === 'video'
                 ? 'bg-[#DB9E30] text-white shadow-md'
                 : 'bg-[#57a68f] hover:bg-[#57a68f]/90 text-white'
@@ -135,7 +121,7 @@ export default function GalleryTabs({ initialItems }: GalleryTabsProps) {
       />
 
       {/* High-Contrast Professional Pagination Bar */}
-      {tabItems.length > 0 && totalPages > 1 && (
+      {activeTab !== null && tabItems.length > 0 && totalPages > 1 && (
         <div className="mt-8 mb-16 flex flex-col items-center justify-center space-y-4 select-none">
           <div className="flex items-center gap-2 sm:gap-3">
             {/* Previous Page Button */}
