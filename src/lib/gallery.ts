@@ -33,6 +33,7 @@ export async function getGalleryItems(): Promise<DBGalleryItem[]> {
   if (await isDbAvailable()) {
     try {
       const items = await prisma.galleryItem.findMany({
+        where: { isPublished: true },
         orderBy: { createdAt: 'desc' },
       })
       if (items && items.length > 0) return items as DBGalleryItem[]
