@@ -201,6 +201,33 @@ async function main() {
     },
   })
 
+  // Seed Gallery Items
+  const { fallbackGalleryItems } = await import('../src/data/gallery')
+  for (const gItem of fallbackGalleryItems) {
+    await prisma.galleryItem.upsert({
+      where: { id: gItem.id },
+      update: {
+        title: gItem.title,
+        type: gItem.type,
+        imageUrl: gItem.imageUrl,
+        videoUrl: gItem.videoUrl || null,
+        thumbnailUrl: gItem.thumbnailUrl || gItem.imageUrl,
+        category: gItem.category || 'General',
+        isPublished: true,
+      },
+      create: {
+        id: gItem.id,
+        title: gItem.title,
+        type: gItem.type,
+        imageUrl: gItem.imageUrl,
+        videoUrl: gItem.videoUrl || null,
+        thumbnailUrl: gItem.thumbnailUrl || gItem.imageUrl,
+        category: gItem.category || 'General',
+        isPublished: true,
+      },
+    })
+  }
+
   console.log('Seed completed:')
   console.log({ superAdmin, admin, subAdmin, tester, campaignYoungPeople, campaignWomen, campaignBbam, event1, event2, event3, event4, event5 })
 }

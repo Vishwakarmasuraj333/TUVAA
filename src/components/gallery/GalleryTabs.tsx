@@ -15,7 +15,7 @@ interface GalleryTabsProps {
 const ITEMS_PER_PAGE = 6
 
 export default function GalleryTabs({ initialItems }: GalleryTabsProps) {
-  const [activeTab, setActiveTab] = useState<'image' | 'video' | null>(null)
+  const [activeTab, setActiveTab] = useState<'image' | 'video' | null>('image')
   const [currentPage, setCurrentPage] = useState<number>(1)
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
   const [activeVideo, setActiveVideo] = useState<DBGalleryItem | null>(null)
