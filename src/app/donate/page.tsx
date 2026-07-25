@@ -17,8 +17,10 @@ export default async function DonatePage() {
   if (await isDbAvailable()) {
     try {
       const dbCampaigns = await prisma.donationCampaign.findMany({
-        where: { isPublished: true },
-        orderBy: { createdAt: 'desc' },
+        where: {
+          isPublished: true,
+          slug: { in: ['young-people', 'women', 'bbam-festival'] },
+        },
       })
 
       if (dbCampaigns && dbCampaigns.length > 0) {
