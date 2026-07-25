@@ -7,7 +7,7 @@ import GalleryVideoCard from './GalleryVideoCard'
 
 interface GalleryGridProps {
   items: DBGalleryItem[]
-  activeTab: 'image' | 'video' | null
+  activeTab: 'all' | 'image' | 'video' | null
   onImageClick: (index: number) => void
   onVideoClick: (item: DBGalleryItem) => void
 }
