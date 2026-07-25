@@ -67,21 +67,27 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
       updateData.password = hashPassword(password)
     }
 
-    if (dpFile && typeof dpFile === 'object' && 'size' in dpFile && (dpFile as File).size > 0) {
+    if (dpFile && dpFile instanceof File && dpFile.size > 0) {
       try {
         const arrayBuffer = await dpFile.arrayBuffer()
         const buffer = Buffer.from(arrayBuffer)
-        
         const { uploadToCloudinary } = await import('@/lib/cloudinary')
         const uploadResult: any = await uploadToCloudinary(buffer, 'tuvaa/users', 'image')
-        if (uploadResult && uploadResult.secure_url) {
-          updateData.dpUrl = uploadResult.secure_url
-        } else {
-          return NextResponse.json({ message: 'Failed to upload profile picture: No URL returned from Cloudinary' }, { status: 500 })
+
+        if (!uploadResult?.secure_url) {
+          return NextResponse.json(
+            { message: 'Failed to upload profile picture: No URL returned from Cloudinary' },
+            { status: 500 }
+          )
         }
-      } catch (err: any) {
-        console.error('Cloudinary upload error in user DP update:', err)
-        return NextResponse.json({ message: `Failed to upload profile picture: ${err?.message || 'Cloudinary credentials missing or invalid'}` }, { status: 500 })
+
+        updateData.dpUrl = uploadResult.secure_url
+      } catch (error) {
+        console.error('Cloudinary upload error in user DP update:', error)
+        return NextResponse.json(
+          { message: 'Failed to upload profile picture. Please check Cloudinary configuration.' },
+          { status: 500 }
+        )
       }
     }
 
