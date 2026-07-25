@@ -93,7 +93,8 @@ export default function AdminNewGalleryPage() {
     const newItems: SelectedFileItem[] = []
 
     Array.from(files).forEach((file) => {
-      const isVideo = file.type.startsWith('video/')
+      const ext = (file.name.split('.').pop() || '').toLowerCase()
+      const isVideo = file.type.startsWith('video/') || ['mp4', 'webm', 'mov', 'm4v', 'mkv', 'avi', '3gp', 'ogv', 'wmv'].includes(ext)
       const detectedType: 'image' | 'video' = isVideo ? 'video' : 'image'
 
       const cleanTitle = file.name

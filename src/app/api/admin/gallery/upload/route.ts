@@ -17,33 +17,38 @@ export async function POST(request: Request) {
     const formData = await request.formData()
 
     const title = (formData.get('title') as string) || ''
-    const type = (formData.get('type') as string) || 'image'
+    const rawType = (formData.get('type') as string) || ''
     const category = (formData.get('category') as string) || 'General'
     const altText = (formData.get('altText') as string) || ''
     const isPublished = formData.get('isPublished') === 'true'
     const file = formData.get('file') as File | null
 
-    if (!title) {
-      return NextResponse.json({ success: false, message: 'Item title is required.' }, { status: 400 })
-    }
-
     if (!file) {
       return NextResponse.json({ success: false, message: 'File is required for upload.' }, { status: 400 })
     }
 
-    const validImageTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg']
-    const validVideoTypes = ['video/mp4', 'video/webm', 'video/quicktime']
+    const ext = (file.name.split('.').pop() || '').toLowerCase()
+    const isImageExt = ['jpg', 'jpeg', 'png', 'webp', 'gif', 'svg', 'avif', 'bmp', 'ico'].includes(ext)
+    const isVideoExt = ['mp4', 'webm', 'mov', 'm4v', 'mkv', 'avi', '3gp', 'ogv', 'wmv'].includes(ext)
+    const isImageMime = file.type.startsWith('image/')
+    const isVideoMime = file.type.startsWith('video/')
 
-    if (type === 'image' && !validImageTypes.includes(file.type)) {
-      return NextResponse.json({ success: false, message: 'Invalid image format. Allowed: JPG, PNG, WEBP' }, { status: 400 })
+    const isImage = isImageMime || isImageExt
+    const isVideo = isVideoMime || isVideoExt
+
+    if (!isImage && !isVideo) {
+      return NextResponse.json(
+        { success: false, message: `Unsupported file format (${file.name}). Allowed: JPG, PNG, WEBP, MP4, WEBM, MOV` },
+        { status: 400 }
+      )
     }
-    if (type === 'video' && !validVideoTypes.includes(file.type)) {
-      return NextResponse.json({ success: false, message: 'Invalid video format. Allowed: MP4, WEBM, MOV' }, { status: 400 })
-    }
+
+    const itemType = rawType ? rawType : isVideo ? 'video' : 'image'
+    const itemTitle = title.trim() || file.name.replace(/\.[^/.]+$/, '').replace(/[-_]+/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase())
 
     const arrayBuffer = await file.arrayBuffer()
     const buffer = Buffer.from(arrayBuffer)
-    const resourceType = type === 'video' ? 'video' : 'image'
+    const resourceType = itemType === 'video' ? 'video' : 'image'
 
     let uploadResult: any
     try {
@@ -62,14 +67,14 @@ export async function POST(request: Request) {
     try {
       const savedItem = await prisma.galleryItem.create({
         data: {
-          title: title.trim(),
-          type,
+          title: itemTitle,
+          type: itemType,
           category: category || 'General',
           altText: altText.trim() || null,
           isPublished,
-          imageUrl: type === 'image' ? uploadResult.secure_url : null,
-          videoUrl: type === 'video' ? uploadResult.secure_url : null,
-          thumbnailUrl: type === 'video' ? uploadResult.secure_url.replace(/\.[^/.]+$/, '.jpg') : uploadResult.secure_url,
+          imageUrl: itemType === 'image' ? uploadResult.secure_url : null,
+          videoUrl: itemType === 'video' ? uploadResult.secure_url : null,
+          thumbnailUrl: itemType === 'video' ? uploadResult.secure_url.replace(/\.[^/.]+$/, '.jpg') : uploadResult.secure_url,
           publicId: uploadResult.public_id,
           format: uploadResult.format,
           sizeBytes: uploadResult.bytes,
@@ -82,10 +87,10 @@ export async function POST(request: Request) {
       const ipAddress = request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip')
       await logActivity({
         userId: session.id,
-        action: type === 'video' ? 'UPLOAD_GALLERY_VIDEO' : 'UPLOAD_GALLERY_IMAGE',
+        action: itemType === 'video' ? 'UPLOAD_GALLERY_VIDEO' : 'UPLOAD_GALLERY_IMAGE',
         entity: 'GALLERY',
         entityId: savedItem.id,
-        message: `Uploaded gallery ${type}: ${title}`,
+        message: `Uploaded gallery ${itemType}: ${itemTitle}`,
         ipAddress,
       })
 
