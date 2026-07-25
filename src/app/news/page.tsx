@@ -29,8 +29,13 @@ const fallbackNews: NewsView[] = [
   { id: 'news-7', title: 'Kayak & Sailing', slug: 'kayak-and-sailing', excerpt: 'TUVAA and local partners created safe, active water-sports opportunities for young people.', image: '/images/kayak-sailing.jpg', date: 'May 31, 2023', comments: 0 },
 ]
 
-export default async function NewsPage({ searchParams }: { searchParams: Promise<{ search?: string | string[] }> }) {
-  const rawSearch = (await searchParams).search
+export default async function NewsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ search?: string | string[]; s?: string | string[] }>
+}) {
+  const resolvedParams = await searchParams
+  const rawSearch = resolvedParams.search || resolvedParams.s
   const search = (Array.isArray(rawSearch) ? rawSearch[0] : rawSearch || '').trim()
   let news: NewsView[] = []
   let directoryMatches: { id: string; title: string; type: string }[] = []
@@ -39,10 +44,35 @@ export default async function NewsPage({ searchParams }: { searchParams: Promise
     try {
       const [posts, listings] = await Promise.all([
         prisma.newsPost.findMany({
-          where: { isPublished: true, ...(search ? { title: { contains: search } } : {}) },
+          where: {
+            isPublished: true,
+            ...(search
+              ? {
+                  OR: [
+                    { title: { contains: search } },
+                    { excerpt: { contains: search } },
+                    { content: { contains: search } },
+                    { category: { contains: search } },
+                  ],
+                }
+              : {}),
+          },
           orderBy: { publishedAt: 'desc' },
         }),
-        search ? prisma.directoryListing.findMany({ where: { isPublished: true, title: { contains: search } }, select: { id: true, title: true, type: true }, take: 10 }) : Promise.resolve([]),
+        search
+          ? prisma.directoryListing.findMany({
+              where: {
+                isPublished: true,
+                OR: [
+                  { title: { contains: search } },
+                  { description: { contains: search } },
+                  { category: { contains: search } },
+                ],
+              },
+              select: { id: true, title: true, type: true },
+              take: 10,
+            })
+          : Promise.resolve([]),
       ])
       news = posts.map((post) => ({
         id: post.id,

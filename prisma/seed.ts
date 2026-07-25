@@ -228,6 +228,37 @@ async function main() {
     })
   }
 
+  // Seed Directory Listings (Artist, Musician, Business, Professional, Community Group)
+  const { directoryTypes, getFallbackListings } = await import('../src/data/directory')
+  for (const dType of directoryTypes) {
+    const listings = getFallbackListings(dType)
+    for (const item of listings) {
+      await prisma.directoryListing.upsert({
+        where: { slug: item.slug },
+        update: {
+          title: item.title,
+          type: item.type,
+          description: item.description,
+          image: item.image,
+          category: item.category,
+          email: item.email || null,
+          isPublished: true,
+        },
+        create: {
+          id: item.id,
+          title: item.title,
+          slug: item.slug,
+          type: item.type,
+          description: item.description,
+          image: item.image,
+          category: item.category,
+          email: item.email || null,
+          isPublished: true,
+        },
+      })
+    }
+  }
+
   console.log('Seed completed:')
   console.log({ superAdmin, admin, subAdmin, tester, campaignYoungPeople, campaignWomen, campaignBbam, event1, event2, event3, event4, event5 })
 }
