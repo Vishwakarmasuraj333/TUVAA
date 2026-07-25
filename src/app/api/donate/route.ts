@@ -34,6 +34,7 @@ export async function POST(req: Request) {
   try {
     const body = await req.json()
     const data = DonationSchema.parse(body)
+    const campaignTitle = SLUG_TITLES[data.campaignId] || 'TUVAA Community Campaign'
 
     // Find or upsert DB campaign
     let dbCampaign = await prisma.donationCampaign.findUnique({

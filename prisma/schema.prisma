@@ -152,7 +152,7 @@ model DonationCampaign {
   id            String   @id @default(cuid())
   title         String
   slug          String   @unique
-  description   String
+  description   String   @db.Text
   image         String
   goalAmount    Float
   raisedAmount  Float    @default(0)
