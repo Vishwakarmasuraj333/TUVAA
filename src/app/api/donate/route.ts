@@ -35,51 +35,77 @@ export async function POST(req: Request) {
     const body = await req.json()
     const data = DonationSchema.parse(body)
 
-    const isStaticSlug = Object.keys(SLUG_TITLES).includes(data.campaignId)
-    const campaignTitle = SLUG_TITLES[data.campaignId] || 'TUVAA Community Campaign'
+    // Find or upsert DB campaign
+    let dbCampaign = await prisma.donationCampaign.findUnique({
+      where: { slug: data.campaignId },
+    })
 
-    // Try to find DB campaign (optional — slug may be static)
-    let dbCampaign = null
-    if (!isStaticSlug) {
-      dbCampaign = await prisma.donationCampaign.findUnique({
-        where: { slug: data.campaignId },
-      })
-      if (!dbCampaign) {
-        return NextResponse.json(
-          { message: 'The selected campaign does not exist.' },
-          { status: 404 }
-        )
+    if (!dbCampaign) {
+      // Upsert default campaign metadata if not found
+      const defaultCampaigns: Record<string, { title: string; desc: string; goal: number; img: string }> = {
+        'young-people': {
+          title: 'YOUNG PEOPLE',
+          desc: 'TUVAA is creating a range of opportunities for young people...',
+          goal: 6032,
+          img: '/images/donate-young-people.jpg',
+        },
+        'women': {
+          title: 'WOMEN',
+          desc: 'Supporting black women with swimming classes, support groups...',
+          goal: 11263,
+          img: '/images/donate-women.jpg',
+        },
+        'bbam-festival': {
+          title: 'BBAM FESTIVAL',
+          desc: 'Setting up black business network to empower start ups...',
+          goal: 4596,
+          img: '/images/donate-bbam-festival.jpg',
+        },
       }
+
+      const meta = defaultCampaigns[data.campaignId] || {
+        title: campaignTitle,
+        desc: 'TUVAA Community Support Campaign',
+        goal: 5000,
+        img: '/images/donate-young-people.jpg',
+      }
+
+      dbCampaign = await prisma.donationCampaign.create({
+        data: {
+          slug: data.campaignId,
+          title: meta.title,
+          description: meta.desc,
+          image: meta.img,
+          goalAmount: meta.goal,
+          raisedAmount: 0,
+          donationCount: 0,
+          isPublished: true,
+        },
+      })
     }
 
     if (data.paymentMethod === 'OFFLINE') {
-      // Save donation record (use a special offline campaign or skip FK if static)
-      try {
-        if (dbCampaign) {
-          await prisma.donation.create({
-            data: {
-              campaignSlug: dbCampaign.slug,
-              campaignTitle: dbCampaign.title,
-              fullName: data.donorName,
-              email: data.donorEmail,
-              amount: data.amount,
-              paymentMethod: 'OFFLINE',
-              status: 'pending',
-            },
-          })
-          await prisma.donationCampaign.update({
-            where: { slug: dbCampaign.slug },
-            data: { 
-              raisedAmount: { increment: data.amount },
-              donationCount: { increment: 1 }
-            },
-          })
-        }
-      } catch (dbError) {
-        console.error('DB save skipped (static slug):', dbError)
-      }
+      await prisma.donation.create({
+        data: {
+          campaignSlug: dbCampaign.slug,
+          campaignTitle: dbCampaign.title,
+          fullName: data.donorName,
+          email: data.donorEmail,
+          amount: data.amount,
+          paymentMethod: 'OFFLINE',
+          status: 'pending',
+        },
+      })
 
-      return NextResponse.json({ message: 'Offline donation pledge recorded.' }, { status: 201 })
+      await prisma.donationCampaign.update({
+        where: { slug: dbCampaign.slug },
+        data: { 
+          raisedAmount: { increment: data.amount },
+          donationCount: { increment: 1 }
+        },
+      })
+
+      return NextResponse.json({ message: 'Offline donation pledge recorded successfully.' }, { status: 201 })
     }
 
     // Stripe Payment

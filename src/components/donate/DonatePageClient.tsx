@@ -71,19 +71,23 @@ export default function DonatePageClient({ campaigns }: DonatePageClientProps) {
                 >
                   {/* Diagonal Shine Effect */}
                   <div className="absolute top-0 -left-[150%] h-full w-[150%] skew-x-[-25deg] bg-gradient-to-r from-transparent via-white/50 to-transparent transition-all duration-1000 ease-in-out group-hover:left-[150%] z-10 pointer-events-none" />
-                  {/* Image */}
-                  <div style={{ width: '100%', height: 220, overflow: 'hidden' }}>
+                  {/* Image container with hover zoom and gradient overlay */}
+                  <div
+                    className="relative w-full h-[230px] overflow-hidden cursor-pointer"
+                    onClick={() => setOpenCampaign(campaign)}
+                  >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={campaign.image}
                       alt={campaign.title}
-                      style={{
-                        width: '100%',
-                        height: '100%',
-                        objectFit: 'cover',
-                        display: 'block',
-                      }}
+                      className="w-full h-full object-cover block transition-transform duration-700 ease-out group-hover:scale-110"
                     />
+                    {/* Dark gradient overlay on hover */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
+                      <span className="font-cinzel text-xs uppercase tracking-widest font-bold text-white bg-[#DB9E30] px-3 py-1.5 rounded-sm shadow-md">
+                        Donate Now →
+                      </span>
+                    </div>
                   </div>
 
                   {/* Body */}
