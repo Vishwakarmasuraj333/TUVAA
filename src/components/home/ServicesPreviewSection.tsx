@@ -12,31 +12,52 @@ interface ServiceData {
   title: string;
 }
 
+interface ServicesPreviewSectionProps {
+  initialServices?: Array<{ num: string; title: string; slug: string }>
+}
+
 const fallbackServices = [
   { num: '01', title: 'PROMOTING AFRICAN CULTURES AND TRADITIONS', slug: 'promoting-african-cultures-and-traditions' },
   { num: '02', title: 'BAME MENTAL HEALTH AND WELLBEING', slug: 'bame-mental-health-and-wellbeing' },
   { num: '03', title: 'HIDDEN HISTORIES', slug: 'hidden-histories' },
 ]
 
-export default function ServicesPreviewSection() {
-  const [services, setServices] = useState(fallbackServices);
+export default function ServicesPreviewSection({ initialServices }: ServicesPreviewSectionProps = {}) {
+  // Always ensure 3 items are present by padding with fallback items if fewer than 3 items returned
+  const getPaddedServices = (inputList?: Array<{ num: string; title: string; slug: string }>) => {
+    if (!inputList || inputList.length === 0) return fallbackServices;
+    if (inputList.length >= 3) return inputList.slice(0, 3);
+    const combined = [...inputList];
+    fallbackServices.slice(inputList.length).forEach((fallback, idx) => {
+      combined.push({
+        num: `0${combined.length + 1}`,
+        title: fallback.title,
+        slug: fallback.slug,
+      });
+    });
+    return combined;
+  };
+
+  const [services, setServices] = useState(getPaddedServices(initialServices));
 
   useEffect(() => {
+    if (initialServices && initialServices.length > 0) {
+      setServices(getPaddedServices(initialServices));
+      return;
+    }
+
     const fetchServices = async () => {
       try {
         const res = await fetch('/api/services?limit=3');
         if (res.ok) {
           const data = await res.json();
           if (data && data.services && data.services.length > 0) {
-            // Map the fetched services to include a padded number
             const mapped = data.services.slice(0, 3).map((s: any, idx: number) => ({
               num: `0${idx + 1}`,
               title: s.title.toUpperCase(),
               slug: s.slug,
             }));
-            
-            // Prefer the requested slugs if we have them, otherwise use whatever came back
-            setServices(mapped.length === 3 ? mapped : fallbackServices);
+            setServices(getPaddedServices(mapped));
           }
         }
       } catch (error) {
@@ -44,7 +65,7 @@ export default function ServicesPreviewSection() {
       }
     };
     fetchServices();
-  }, []);
+  }, [initialServices]);
 
   const containerVariants = {
     hidden: { opacity: 0 },

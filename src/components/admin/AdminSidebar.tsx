@@ -38,6 +38,7 @@ interface SidebarItem {
 
 const sidebarItems: SidebarItem[] = [
   { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
+  { name: 'News Manager', href: '/admin/news', icon: Newspaper },
   { name: 'Services', href: '/admin/services', icon: Newspaper },
   { name: 'Projects', href: '/admin/projects', icon: FolderKanban },
   { name: 'Events', href: '/admin/events', icon: Calendar },

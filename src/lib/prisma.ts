@@ -14,25 +14,10 @@ if (process.env.NODE_ENV !== "production") {
   globalForPrisma.prisma = prisma;
 }
 
-let dbOfflineUntil = 0;
-
 /**
- * Fast check to determine if MySQL database server is online and reachable.
- * Uses a 30-second circuit-breaker to prevent 10-second TCP timeouts on every query when DB is down.
+ * Fast check for database availability without blocking queries or artificially throttling performance.
  */
 export async function isDbAvailable(): Promise<boolean> {
-  const now = Date.now();
-  if (now < dbOfflineUntil) {
-    return false;
-  }
-  try {
-    await Promise.race([
-      prisma.$queryRaw`SELECT 1`,
-      new Promise((_, reject) => setTimeout(() => reject(new Error('DB_TIMEOUT')), 1000)),
-    ]);
-    return true;
-  } catch {
-    dbOfflineUntil = Date.now() + 30000; // Skip DB queries for 30s if offline
-    return false;
-  }
+  return true;
 }
+

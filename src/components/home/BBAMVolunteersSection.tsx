@@ -55,13 +55,15 @@ export default function BBAMVolunteersSection() {
             transition={{ duration: 0.3 }}
             className="relative h-[380px] sm:h-[480px] md:h-[500px] w-full rounded-sm overflow-hidden shadow-md border border-zinc-100"
           >
-            <Image
-              src="/images/bbam-collage.jpg"
-              alt="BBAM Festival Collage"
-              fill
-              sizes="(max-width: 768px) 100vw, 50vw"
-              className="object-cover object-center bg-zinc-50"
-            />
+            <div className="relative w-full h-full">
+              <Image
+                src="/images/bbam-collage.jpg"
+                alt="BBAM Festival Collage"
+                fill
+                sizes="(max-width: 768px) 100vw, 50vw"
+                className="object-cover object-center bg-zinc-50"
+              />
+            </div>
           </motion.div>
 
           {/* Right Text Content */}
@@ -111,13 +113,15 @@ export default function BBAMVolunteersSection() {
             transition={{ duration: 0.3 }}
             className="relative h-[380px] sm:h-[480px] md:h-[500px] w-full rounded-sm overflow-hidden shadow-md border border-zinc-100"
           >
-            <Image
-              src="/images/bbam-festival-2025.jpg"
-              alt="BBAM Festival 2025 Flyer"
-              fill
-              sizes="(max-width: 768px) 100vw, 50vw"
-              className="object-cover object-center bg-zinc-50"
-            />
+            <div className="relative w-full h-full">
+              <Image
+                src="/images/bbam-festival-2025.jpg"
+                alt="BBAM Festival 2025 Flyer"
+                fill
+                sizes="(max-width: 768px) 100vw, 50vw"
+                className="object-cover object-center bg-zinc-50"
+              />
+            </div>
           </motion.div>
         </div>
 

@@ -1,8 +1,7 @@
 import { NextResponse } from 'next/server'
-import { PrismaClient } from '@prisma/client'
+import { revalidatePath } from 'next/cache'
+import { prisma } from '@/lib/prisma'
 import { getSession, hasRole } from '@/lib/auth'
-
-const prisma = new PrismaClient()
 
 export async function GET() {
   try {
@@ -56,9 +55,18 @@ export async function POST(request: Request) {
       }
     })
 
+    revalidatePath('/')
+    revalidatePath('/bbam-2')
+    revalidatePath('/artist')
+    revalidatePath('/musicians')
+    revalidatePath('/businesses')
+    revalidatePath('/skills-professionals')
+    revalidatePath('/community-groups')
+
     return NextResponse.json(listing, { status: 201 })
   } catch (error: any) {
     if (error.code === 'P2002') return NextResponse.json({ error: 'Slug already exists' }, { status: 400 })
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
   }
 }
+

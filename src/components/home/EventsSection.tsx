@@ -34,14 +34,16 @@ export default function EventsSection() {
             transition={{ duration: 0.3 }}
             className="relative h-[240px] sm:h-[300px] w-full rounded-sm overflow-hidden shadow-md border border-zinc-100"
           >
-            <Image
-              src="/images/women-swimming.jpg"
-              alt="Women Swimming Lesson"
-              fill
-              loading="eager"
-              sizes="(max-width: 768px) 100vw, 40vw"
-              className="object-cover object-center bg-zinc-50"
-            />
+            <div className="relative w-full h-full">
+              <Image
+                src="/images/women-swimming.jpg"
+                alt="Women Swimming Lesson"
+                fill
+                loading="eager"
+                sizes="(max-width: 768px) 100vw, 40vw"
+                className="object-cover object-center bg-zinc-50"
+              />
+            </div>
           </motion.div>
           <div className="space-y-4">
             <h3 className="font-cinzel text-xl sm:text-2xl text-[#35170f] font-bold tracking-wider leading-snug">
@@ -77,13 +79,15 @@ export default function EventsSection() {
             transition={{ duration: 0.3 }}
             className="relative h-[280px] sm:h-[350px] md:h-[400px] w-full rounded-sm overflow-hidden shadow-md border border-[#e8dfc8]"
           >
-            <Image
-              src="/images/events-cultural.jpg"
-              alt="TUVAA Cultural Event"
-              fill
-              sizes="(max-width: 768px) 100vw, 50vw"
-              className="object-cover object-center bg-zinc-50"
-            />
+            <div className="relative w-full h-full">
+              <Image
+                src="/images/events-cultural.jpg"
+                alt="TUVAA Cultural Event"
+                fill
+                sizes="(max-width: 768px) 100vw, 50vw"
+                className="object-cover object-center bg-zinc-50"
+              />
+            </div>
           </motion.div>
         </div>
       </div>

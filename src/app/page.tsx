@@ -7,8 +7,33 @@ import CommunityStreetCleaningSection from "@/components/home/CommunityStreetCle
 import ServicesPreviewSection from "@/components/home/ServicesPreviewSection";
 import RecentNewsSection from "@/components/home/RecentNewsSection";
 import StatsCounterSection from "@/components/home/StatsCounterSection";
+import { getAllNewsPosts } from "@/lib/news";
+import { getAllServices } from "@/lib/services";
 
-export default function HomePage() {
+export const revalidate = 60;
+
+export default async function HomePage() {
+  const [rawNews, rawServices] = await Promise.all([
+    getAllNewsPosts().catch(() => []),
+    getAllServices().catch(() => []),
+  ]);
+
+  const initialNews = rawNews.map((post) => ({
+    id: post.id,
+    title: post.title,
+    slug: post.slug,
+    content: post.content || '',
+    excerpt: post.excerpt,
+    image: post.image,
+    createdAt: typeof post.createdAt === 'string' ? post.createdAt : post.createdAt?.toISOString() || new Date().toISOString(),
+  }));
+
+  const initialServices = rawServices.slice(0, 3).map((s, idx) => ({
+    num: `0${idx + 1}`,
+    title: s.title.toUpperCase(),
+    slug: s.slug,
+  }));
+
   return (
     <div className="w-full relative">
       <EventPopup />
@@ -17,9 +42,10 @@ export default function HomePage() {
       <BBAMVolunteersSection />
       <EventsSection />
       <CommunityStreetCleaningSection />
-      <ServicesPreviewSection />
-      <RecentNewsSection />
+      <ServicesPreviewSection initialServices={initialServices.length > 0 ? initialServices : undefined} />
+      <RecentNewsSection initialNews={initialNews.length > 0 ? initialNews : undefined} />
       <StatsCounterSection />
     </div>
   );
 }
+

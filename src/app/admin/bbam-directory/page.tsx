@@ -6,6 +6,7 @@ import { ArrowLeft, Edit, Eye, EyeOff, Loader2, Plus, Search, ShieldAlert, Trash
 import { toast } from 'sonner'
 import ConfirmDeleteDialog from '@/components/admin/ConfirmDeleteDialog'
 import { directoryTypes, DirectoryType } from '@/data/directory'
+import CloudinaryImageUpload from '@/components/admin/CloudinaryImageUpload'
 
 interface Listing {
   id: string
@@ -167,7 +168,14 @@ export default function BbamDirectoryAdminPage() {
               <Field label="Type"><select value={form.type} onChange={(event) => updateForm('type', event.target.value)} className="admin-directory-input">{directoryTypes.map((type) => <option key={type} value={type}>{typeLabels[type]}</option>)}</select></Field>
               <Field label="Slug"><input required pattern="[a-z0-9]+(?:-[a-z0-9]+)*" value={form.slug} onChange={(event) => updateForm('slug', event.target.value)} className="admin-directory-input" /></Field>
               <Field label="Category"><input value={form.category} onChange={(event) => updateForm('category', event.target.value)} className="admin-directory-input" /></Field>
-              <Field label="Image path / URL"><input value={form.image} onChange={(event) => updateForm('image', event.target.value)} placeholder="/images/example.jpg" className="admin-directory-input" /></Field>
+              <div className="sm:col-span-2">
+                <CloudinaryImageUpload
+                  value={form.image}
+                  onChange={(url) => updateForm('image', url)}
+                  label="Listing Main Image (Cloudinary)"
+                  placeholder="/images/example.jpg"
+                />
+              </div>
               <Field label="Sort order"><input type="number" min="0" value={form.order} onChange={(event) => updateForm('order', Number(event.target.value))} className="admin-directory-input" /></Field>
               <Field label="Email"><input type="email" value={form.email} onChange={(event) => updateForm('email', event.target.value)} className="admin-directory-input" /></Field>
               <Field label="Phone"><input type="tel" maxLength={20} value={form.phone} onChange={(event) => updateForm('phone', event.target.value)} className="admin-directory-input" /></Field>

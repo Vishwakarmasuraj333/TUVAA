@@ -18,8 +18,10 @@ export async function GET(req: Request) {
 
     const q = query.trim()
 
-    // Query in parallel
+    // Query across all entity models in parallel
     const [
+      newsPosts,
+      directoryListings,
       services,
       projects,
       events,
@@ -28,9 +30,38 @@ export async function GET(req: Request) {
       subscribers,
       messages,
       groups,
+      registrations,
+      serviceComments,
+      monthlyDonations,
       users,
     ] = await Promise.all([
-      // 1. Services
+      // 1. News Posts
+      prisma.newsPost.findMany({
+        where: {
+          OR: [
+            { title: { contains: q } },
+            { excerpt: { contains: q } },
+            { content: { contains: q } },
+            { category: { contains: q } },
+          ],
+        },
+        take: 3,
+        select: { id: true, title: true, category: true },
+      }),
+      // 2. Directory Listings (Artists, Musicians, Businesses, Professionals, Community Groups)
+      prisma.directoryListing.findMany({
+        where: {
+          OR: [
+            { title: { contains: q } },
+            { description: { contains: q } },
+            { category: { contains: q } },
+            { type: { contains: q } },
+          ],
+        },
+        take: 3,
+        select: { id: true, title: true, type: true, category: true },
+      }),
+      // 3. Services
       prisma.service.findMany({
         where: {
           OR: [
@@ -41,7 +72,7 @@ export async function GET(req: Request) {
         take: 3,
         select: { id: true, title: true, slug: true },
       }),
-      // 2. Projects
+      // 4. Projects
       prisma.project.findMany({
         where: {
           OR: [
@@ -52,7 +83,7 @@ export async function GET(req: Request) {
         take: 3,
         select: { id: true, title: true },
       }),
-      // 3. Events
+      // 5. Events
       prisma.event.findMany({
         where: {
           OR: [
@@ -64,7 +95,7 @@ export async function GET(req: Request) {
         take: 3,
         select: { id: true, title: true },
       }),
-      // 4. Gallery Items
+      // 6. Gallery Items
       prisma.galleryItem.findMany({
         where: {
           OR: [
@@ -75,7 +106,7 @@ export async function GET(req: Request) {
         take: 3,
         select: { id: true, title: true, category: true },
       }),
-      // 5. Donations
+      // 7. Donations
       prisma.donation.findMany({
         where: {
           OR: [
@@ -86,7 +117,7 @@ export async function GET(req: Request) {
         take: 3,
         select: { id: true, fullName: true, amount: true },
       }),
-      // 6. Newsletter Subscribers
+      // 8. Newsletter Subscribers
       prisma.newsletterSubscriber.findMany({
         where: {
           email: { contains: q },
@@ -94,7 +125,7 @@ export async function GET(req: Request) {
         take: 3,
         select: { id: true, email: true },
       }),
-      // 7. Contact Messages
+      // 9. Contact Messages
       prisma.contactMessage.findMany({
         where: {
           OR: [
@@ -106,7 +137,7 @@ export async function GET(req: Request) {
         take: 3,
         select: { id: true, name: true, subject: true },
       }),
-      // 8. Community Group Applications
+      // 10. Community Group Applications
       prisma.africanGroupApplication.findMany({
         where: {
           OR: [
@@ -117,7 +148,41 @@ export async function GET(req: Request) {
         take: 3,
         select: { id: true, fullName: true, communityGroupName: true },
       }),
-      // 9. Users
+      // 11. Event Registrations
+      prisma.eventRegistration.findMany({
+        where: {
+          OR: [
+            { fullName: { contains: q } },
+            { email: { contains: q } },
+            { eventSlug: { contains: q } },
+          ],
+        },
+        take: 3,
+        select: { id: true, fullName: true, eventSlug: true },
+      }),
+      // 12. Service Comments
+      prisma.serviceComment.findMany({
+        where: {
+          OR: [
+            { name: { contains: q } },
+            { comment: { contains: q } },
+          ],
+        },
+        take: 3,
+        select: { id: true, name: true, serviceSlug: true },
+      }),
+      // 13. Monthly Donations
+      prisma.monthlyDonation.findMany({
+        where: {
+          OR: [
+            { fullName: { contains: q } },
+            { email: { contains: q } },
+          ],
+        },
+        take: 3,
+        select: { id: true, fullName: true, amount: true },
+      }),
+      // 14. Users
       prisma.user.findMany({
         where: {
           OR: [
@@ -132,12 +197,30 @@ export async function GET(req: Request) {
 
     const results: any[] = []
 
+    newsPosts.forEach((n) => {
+      results.push({
+        id: n.id,
+        type: `News (${n.category || 'General'})`,
+        title: n.title,
+        link: `/admin/news`,
+      })
+    })
+
+    directoryListings.forEach((d) => {
+      results.push({
+        id: d.id,
+        type: `Directory (${d.type})`,
+        title: d.title,
+        link: `/admin/bbam-directory`,
+      })
+    })
+
     services.forEach((s) => {
       results.push({
         id: s.id,
         type: 'Service',
         title: s.title,
-        link: `/admin/services/${s.id}/edit`,
+        link: `/admin/services`,
       })
     })
 
@@ -146,7 +229,7 @@ export async function GET(req: Request) {
         id: p.id,
         type: 'Project',
         title: p.title,
-        link: `/admin/projects/${p.id}/edit`,
+        link: `/admin/projects`,
       })
     })
 
@@ -190,7 +273,7 @@ export async function GET(req: Request) {
       results.push({
         id: m.id,
         type: 'Contact Message',
-        title: `${m.name}: ${m.subject}`,
+        title: `${m.name}: ${m.subject || 'Inquiry'}`,
         link: `/admin/contact-messages`,
       })
     })
@@ -198,13 +281,39 @@ export async function GET(req: Request) {
     groups.forEach((g) => {
       results.push({
         id: g.id,
-        type: 'Community Group',
+        type: 'Community Group App',
         title: `${g.fullName} (${g.communityGroupName})`,
         link: `/admin/community-groups`,
       })
     })
 
-    // Super Admin only can see user search results
+    registrations.forEach((r) => {
+      results.push({
+        id: r.id,
+        type: 'Event Registration',
+        title: `${r.fullName} (${r.eventSlug})`,
+        link: `/admin/event-registrations`,
+      })
+    })
+
+    serviceComments.forEach((c) => {
+      results.push({
+        id: c.id,
+        type: 'Comment',
+        title: `${c.name} on ${c.serviceSlug}`,
+        link: `/admin/service-comments`,
+      })
+    })
+
+    monthlyDonations.forEach((md) => {
+      results.push({
+        id: md.id,
+        type: 'Monthly Donation',
+        title: `${md.fullName} (£${md.amount}/mo)`,
+        link: `/admin/monthly-donations`,
+      })
+    })
+
     if (session.role === 'super_admin') {
       users.forEach((u) => {
         results.push({
@@ -222,4 +331,5 @@ export async function GET(req: Request) {
     return NextResponse.json({ message: 'Internal server error' }, { status: 500 })
   }
 }
+
 

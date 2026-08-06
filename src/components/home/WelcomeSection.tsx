@@ -7,16 +7,18 @@ import { motion } from "framer-motion";
 export default function WelcomeSection() {
   return (
     <section className="relative flex min-h-[500px] md:min-h-[600px] w-full items-center justify-center overflow-hidden border-b border-[#DB9E30]/10 bg-[#120c08] py-16 md:py-28">
-      {/* Background Image */}
-      <Image
-        src="/images/banner-2-v2.webp"
-        alt="Welcome to TUVAA background"
-        fill
-        priority
-        quality={95}
-        className="object-cover object-center"
-        sizes="100vw"
-      />
+      {/* Background Image Container */}
+      <div className="absolute inset-0 z-0 select-none pointer-events-none w-full h-full">
+        <Image
+          src="/images/banner-2-v2.webp"
+          alt="Welcome to TUVAA background"
+          fill
+          priority
+          quality={95}
+          className="object-cover object-center"
+          sizes="100vw"
+        />
+      </div>
 
       {/* Clear Overlays as specified */}
       <div

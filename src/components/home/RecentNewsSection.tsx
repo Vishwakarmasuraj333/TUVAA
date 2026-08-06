@@ -16,11 +16,21 @@ interface NewsItem {
   createdAt: string
 }
 
-export default function RecentNewsSection() {
-  const [newsList, setNewsList] = useState<NewsItem[]>([])
-  const [loading, setLoading] = useState(true)
+interface RecentNewsSectionProps {
+  initialNews?: NewsItem[]
+}
+
+export default function RecentNewsSection({ initialNews }: RecentNewsSectionProps = {}) {
+  const [newsList, setNewsList] = useState<NewsItem[]>(initialNews || [])
+  const [loading, setLoading] = useState(!initialNews || initialNews.length === 0)
 
   useEffect(() => {
+    if (initialNews && initialNews.length > 0) {
+      setNewsList(initialNews)
+      setLoading(false)
+      return
+    }
+
     async function fetchNews() {
       try {
         const response = await fetch('/api/news')
@@ -35,7 +45,7 @@ export default function RecentNewsSection() {
       }
     }
     fetchNews()
-  }, [])
+  }, [initialNews])
 
   // Static fallback data matching screenshot specifications
   const fallbackMain = {
@@ -94,13 +104,15 @@ export default function RecentNewsSection() {
               transition={{ duration: 0.3 }}
               className="relative h-[250px] sm:h-[320px] w-full rounded-sm overflow-hidden shadow border border-zinc-100"
             >
-              <Image
-                src={mainPost?.image || fallbackMain.image}
-                alt={mainPost?.title || fallbackMain.title}
-                fill
-                sizes="(max-width: 1024px) 100vw, 50vw"
-                className="object-cover object-center bg-zinc-50"
-              />
+              <div className="relative w-full h-full">
+                <Image
+                  src={mainPost?.image || fallbackMain.image}
+                  alt={mainPost?.title || fallbackMain.title}
+                  fill
+                  sizes="(max-width: 1024px) 100vw, 50vw"
+                  className="object-cover object-center bg-zinc-50"
+                />
+              </div>
             </motion.div>
 
             <div className="space-y-3.5 text-left">
@@ -192,13 +204,15 @@ export default function RecentNewsSection() {
               </h4>
 
               <div className="relative aspect-video w-full rounded-sm overflow-hidden shadow border border-zinc-100 group cursor-pointer bg-zinc-950">
-                <Image
-                  src="/images/bbam-gala-video.jpg"
-                  alt="BBAM Gala Video"
-                  fill
-                  sizes="(max-width: 1024px) 100vw, 50vw"
-                  className="object-cover object-center opacity-85 group-hover:opacity-75 transition-opacity"
-                />
+                <div className="relative w-full h-full">
+                  <Image
+                    src="/images/bbam-gala-video.jpg"
+                    alt="BBAM Gala Video"
+                    fill
+                    sizes="(max-width: 1024px) 100vw, 50vw"
+                    className="object-cover object-center opacity-85 group-hover:opacity-75 transition-opacity"
+                  />
+                </div>
                 {/* Play Button Overlay */}
                 <div className="absolute inset-0 flex items-center justify-center z-20">
                   <motion.div

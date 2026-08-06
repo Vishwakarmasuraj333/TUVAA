@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useEffect } from 'react'
+import CloudinaryImageUpload from '@/components/admin/CloudinaryImageUpload'
 
 const formSchema = z.object({
   title: z.string().min(1, 'Title is required'),
@@ -44,7 +45,7 @@ export default function ServiceForm({ initialData, onSubmit, isSubmitting }: Ser
       slug: initialData?.slug || '',
       excerpt: initialData?.excerpt || '',
       content: initialData?.content || '',
-      image: initialData?.image || '/images/service-placeholder.jpg',
+      image: initialData?.image || '/images/event-placeholder.jpg',
       publishedAt: getFormattedDate(initialData?.publishedAt) || new Date().toISOString().split('T')[0],
       isPublished: initialData?.isPublished ?? true,
     },
@@ -99,21 +100,15 @@ export default function ServiceForm({ initialData, onSubmit, isSubmitting }: Ser
         )}
       </div>
 
-      {/* Image Path */}
-      <div className="space-y-1.5">
-        <label className="text-xs font-cinzel font-bold text-gold-400 uppercase tracking-widest block">
-          Image Path / URL
-        </label>
-        <input
-          type="text"
-          {...register('image')}
-          className="w-full bg-black/40 border border-gold-500/20 rounded px-4 py-2.5 text-sm focus:outline-none focus:border-gold-400 transition-colors"
-          placeholder="/images/healthwellbeing.jpg"
-        />
-        {errors.image && (
-          <p className="text-xs text-red-400 font-medium">{errors.image.message}</p>
-        )}
-      </div>
+      {/* Image Path with Cloudinary Upload */}
+      <CloudinaryImageUpload
+        value={watch('image')}
+        onChange={(url) => setValue('image', url, { shouldValidate: true })}
+        label="Service Image (Cloudinary)"
+        placeholder="/images/event-placeholder.jpg"
+        error={errors.image?.message}
+        required
+      />
 
       {/* Published Date */}
       <div className="space-y-1.5">

@@ -129,7 +129,7 @@ export default function HeroSlider() {
         <AnimatePresence initial={false} mode="sync">
           <motion.div
             key={activeSlide.image}
-            className="absolute inset-0"
+            className="absolute inset-0 w-full h-full relative overflow-hidden"
             initial={{ opacity: 0, scale: 1.05 }}
             animate={{ opacity: 1, scale: 1.12 }}
             exit={{ opacity: 0 }}

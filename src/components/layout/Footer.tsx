@@ -41,7 +41,7 @@ export default function Footer() {
   return (
     <footer className="relative w-full text-white overflow-hidden bg-[#0f0b08] z-10 pt-[85px] pb-0 font-sans">
       {/* Background Image Layer */}
-      <div className="absolute inset-0 z-0 select-none pointer-events-none">
+      <div className="absolute inset-0 z-0 select-none pointer-events-none w-full h-full">
         <Image
           src={bgSrc}
           alt="Footer Background"

@@ -12,7 +12,8 @@ interface ServiceCardProps {
 }
 
 export default function ServiceCard({ service }: ServiceCardProps) {
-  const [imageSrc, setImageSrc] = useState(service.image || '/images/service-placeholder.jpg')
+  const initialImg = service.image === '/images/street-cleaning.jpg' ? '/images/community-street-cleaning.jpg' : (service.image || '/images/event-placeholder.jpg')
+  const [imageSrc, setImageSrc] = useState(initialImg)
 
   const formattedDate = service.date
 
@@ -44,7 +45,7 @@ export default function ServiceCard({ service }: ServiceCardProps) {
             fill
             sizes="(max-width: 768px) 100vw, 50vw"
             className="object-cover object-center bg-zinc-50"
-            onError={() => setImageSrc('/images/service-placeholder.jpg')}
+            onError={() => setImageSrc('/images/event-placeholder.jpg')}
           />
         </motion.div>
 

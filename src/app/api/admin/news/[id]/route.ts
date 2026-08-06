@@ -1,8 +1,7 @@
 import { NextResponse } from 'next/server'
-import { PrismaClient } from '@prisma/client'
+import { revalidatePath } from 'next/cache'
+import { prisma } from '@/lib/prisma'
 import { getSession, hasRole } from '@/lib/auth'
-
-const prisma = new PrismaClient()
 
 export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -28,6 +27,10 @@ export async function DELETE(request: Request, { params }: { params: Promise<{ i
         ipAddress: request.headers.get('x-forwarded-for') || 'Unknown',
       }
     })
+
+    revalidatePath('/')
+    revalidatePath('/news')
+    if (newsPost.slug) revalidatePath(`/news/${newsPost.slug}`)
 
     return NextResponse.json({ success: true })
   } catch (error) {
@@ -60,6 +63,10 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
         ipAddress: request.headers.get('x-forwarded-for') || 'Unknown',
       }
     })
+
+    revalidatePath('/')
+    revalidatePath('/news')
+    if (newsPost.slug) revalidatePath(`/news/${newsPost.slug}`)
 
     return NextResponse.json(newsPost)
   } catch (error: any) {

@@ -26,27 +26,47 @@ model PageContent {
 }
 
 model NewsPost {
-  id          String   @id @default(cuid())
-  title       String
-  slug        String   @unique
-  excerpt     String?
-  content     String?  @db.Text
-  image       String?
-  videoUrl    String?
-  category    String   @default("General")
-  published   Boolean  @default(true)
-  isPublished Boolean  @default(true)
-  publishedAt DateTime @default(now())
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id              String        @id @default(cuid())
+  title           String
+  slug            String        @unique
+  excerpt         String?       @db.Text
+  content         String?       @db.Text
+  image           String?
+  videoUrl        String?
+  author          String        @default("TUVAA")
+  category        String        @default("General")
+  views           Int           @default(0)
+  published       Boolean       @default(true)
+  isPublished     Boolean       @default(true)
+  metaTitle       String?
+  metaDescription String?
+  keywords        String?
+  publishedAt     DateTime      @default(now())
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  comments        NewsComment[]
+}
+
+model NewsComment {
+  id        String   @id @default(cuid())
+  postId    String
+  name      String
+  email     String
+  message   String   @db.Text
+  approved  Boolean  @default(false)
+  status    String   @default("pending")
+  createdAt DateTime @default(now())
+
+  post NewsPost @relation(fields: [postId], references: [id], onDelete: Cascade)
 }
 
 model Service {
   id          String   @id @default(cuid())
   title       String
   slug        String   @unique
-  excerpt     String
-  content     String?
+  excerpt     String   @db.Text
+  content     String?  @db.Text
   image       String
   publishedAt DateTime @default(now())
   comments    Int      @default(0)
@@ -59,8 +79,8 @@ model Project {
   id          String   @id @default(cuid())
   title       String
   slug        String   @unique
-  excerpt     String
-  content     String?
+  excerpt     String   @db.Text
+  content     String?  @db.Text
   image       String
   isPublished Boolean  @default(true)
   order       Int      @default(0)
@@ -72,8 +92,8 @@ model Event {
   id          String    @id @default(cuid())
   title       String
   slug        String    @unique
-  excerpt     String?
-  content     String?
+  excerpt     String?   @db.Text
+  content     String?   @db.Text
   image       String?
   posterImage String?
   videoUrl    String?

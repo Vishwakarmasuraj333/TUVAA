@@ -1,8 +1,7 @@
 import { NextResponse } from 'next/server'
-import { PrismaClient } from '@prisma/client'
+import { revalidatePath } from 'next/cache'
+import { prisma } from '@/lib/prisma'
 import { getSession, hasRole } from '@/lib/auth'
-
-const prisma = new PrismaClient()
 
 export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -15,9 +14,13 @@ export async function DELETE(request: Request, { params }: { params: Promise<{ i
 
     const service = await prisma.service.findUnique({ where: { id } })
     if (!service) {
-      return NextResponse.json({ error: 'Not found' }, { status: 404 })
+      return NextResponse.json({ error: 'Service not found' }, { status: 404 })
     }
 
+    // Delete associated comments first
+    await prisma.serviceComment.deleteMany({ where: { serviceSlug: service.slug } })
+
+    // Delete service
     await prisma.service.delete({ where: { id } })
 
     // Log activity
@@ -32,9 +35,14 @@ export async function DELETE(request: Request, { params }: { params: Promise<{ i
       }
     })
 
+    revalidatePath('/')
+    revalidatePath('/our-services')
+    if (service.slug) revalidatePath(`/services/${service.slug}`)
+
     return NextResponse.json({ success: true })
-  } catch (error) {
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
+  } catch (error: any) {
+    console.error('Delete service error:', error)
+    return NextResponse.json({ error: 'Internal Server Error', message: error.message }, { status: 500 })
   }
 }
 
@@ -64,6 +72,10 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
         ipAddress: request.headers.get('x-forwarded-for') || 'Unknown',
       }
     })
+
+    revalidatePath('/')
+    revalidatePath('/our-services')
+    if (service.slug) revalidatePath(`/services/${service.slug}`)
 
     return NextResponse.json(service)
   } catch (error: any) {

@@ -6,6 +6,7 @@ import { toast } from 'sonner'
 import ConfirmDeleteDialog from '@/components/admin/ConfirmDeleteDialog'
 import { formatDate } from '@/lib/utils'
 import Link from 'next/link'
+import CloudinaryImageUpload from '@/components/admin/CloudinaryImageUpload'
 
 interface NewsPost {
   id: string
@@ -303,16 +304,12 @@ export default function AdminNewsPage() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            <div className="space-y-1.5">
-              <label className="block text-[10px] font-cinzel text-gold-600 dark:text-gold-400 uppercase tracking-widest font-bold">Image URL</label>
-              <input
-                type="text"
-                value={image}
-                onChange={(e) => setImage(e.target.value)}
-                className="w-full px-4 py-2.5 bg-[#fdfcfb] dark:bg-[#1c1510] border border-[#e8dfc8] dark:border-[#2a211a] rounded focus:outline-none focus:border-gold-500 text-sm text-gray-800 dark:text-white"
-                placeholder="e.g. /images/hero-bbam.jpg"
-              />
-            </div>
+            <CloudinaryImageUpload
+              value={image}
+              onChange={(url) => setImage(url)}
+              label="Article Image (Cloudinary)"
+              placeholder="Select image or paste URL..."
+            />
             <div className="space-y-1.5 flex items-end pb-3">
               <label className="flex items-center gap-2 text-xs text-gray-700 dark:text-white/80 cursor-pointer select-none">
                 <input

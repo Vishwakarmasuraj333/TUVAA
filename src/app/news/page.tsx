@@ -32,11 +32,15 @@ const fallbackNews: NewsView[] = [
 export default async function NewsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ search?: string | string[]; s?: string | string[] }>
+  searchParams: Promise<{ search?: string | string[]; s?: string | string[]; category?: string | string[]; cat?: string | string[] }>
 }) {
   const resolvedParams = await searchParams
   const rawSearch = resolvedParams.search || resolvedParams.s
   const search = (Array.isArray(rawSearch) ? rawSearch[0] : rawSearch || '').trim()
+
+  const rawCategory = resolvedParams.category || resolvedParams.cat
+  const category = (Array.isArray(rawCategory) ? rawCategory[0] : rawCategory || '').trim()
+
   let news: NewsView[] = []
   let directoryMatches: { id: string; title: string; type: string }[] = []
 
@@ -46,6 +50,7 @@ export default async function NewsPage({
         prisma.newsPost.findMany({
           where: {
             isPublished: true,
+            ...(category && category !== 'All' ? { category: { contains: category } } : {}),
             ...(search
               ? {
                   OR: [
@@ -89,15 +94,23 @@ export default async function NewsPage({
     }
   }
 
-  if (!news.length) news = fallbackNews.filter((post) => !search || `${post.title} ${post.excerpt}`.toLowerCase().includes(search.toLowerCase()))
+  if (!news.length) {
+    news = fallbackNews.filter((post) => {
+      const matchesSearch = !search || `${post.title} ${post.excerpt}`.toLowerCase().includes(search.toLowerCase())
+      return matchesSearch
+    })
+  }
+
   const typeRoutes: Record<string, string> = { artist: '/artist', musician: '/musicians', business: '/businesses', professional: '/skills-professionals', community_group: '/community-groups' }
 
   return (
     <div className="w-full bg-white text-[#35170f]">
-      <PageBanner title="All Posts" breadcrumb="All Posts" />
+      <PageBanner title={category && category !== 'All' ? `News: ${category}` : "All Posts"} breadcrumb="All Posts" />
       <div className="mx-auto grid w-full max-w-[1480px] gap-12 px-5 py-16 sm:px-8 lg:grid-cols-[minmax(0,1fr)_350px] lg:items-start lg:px-10 lg:py-24">
         <main>
+          {category && category !== 'All' && <p className="mb-4 text-xs uppercase tracking-wider font-bold text-[#DB9E30]">Category: <strong>{category}</strong></p>}
           {search && <p className="mb-9 text-sm text-[#8b8178]">Search results for <strong className="text-[#35170f]">“{search}”</strong></p>}
+
           {directoryMatches.length > 0 && (
             <section className="mb-12 rounded-sm border border-[#eee7dc] bg-[#faf8ef] p-6">
               <h2 className="mb-4 font-cinzel text-lg font-bold">Directory matches</h2>

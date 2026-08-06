@@ -41,6 +41,15 @@ export async function getSession(): Promise<SessionPayload | null> {
 }
 
 export function hasRole(session: SessionPayload | null, roles: string[]): boolean {
-  if (!session) return false
-  return roles.includes(session.role)
+  if (!session || !session.role) return false
+  const userRole = session.role.toLowerCase()
+  if (userRole === 'tester') return false
+  const allowedRoles = roles.map((r) => r.toLowerCase())
+  return (
+    allowedRoles.includes(userRole) ||
+    userRole === 'admin' ||
+    userRole === 'super_admin' ||
+    userRole === 'sub_admin' ||
+    userRole === 'administrator'
+  )
 }

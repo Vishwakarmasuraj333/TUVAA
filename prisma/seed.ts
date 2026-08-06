@@ -259,8 +259,365 @@ async function main() {
     }
   }
 
+  // Seed News Posts
+  const newsKayak = await prisma.newsPost.upsert({
+    where: { slug: 'kayak-and-sailing' },
+    update: {},
+    create: {
+      slug: 'kayak-and-sailing',
+      title: 'KAYAK & Sailing',
+      excerpt: 'TUVAA in partnership with Active Nation and the Royal Yacht Association. For more information and how you can register please click the link below: https://widget.eola.co/550/activities/7zcf LAST CHANCE FOR KAYAKING THIS YEAR SEPT 23/24 BOOK AT LINK BELOW https://widget.eola.co/752/activities/tuvaa-watersports Announcement- water, sailing or kayak TUVAA’s partnership with Active Nation in watersports…',
+      content: `TUVAA in partnership with Active Nation and the Royal Yacht Association. For more information and how you can register please click the link below:\n\nhttps://widget.eola.co/550/activities/7zcf\n\nLAST CHANCE FOR KAYAKING THIS YEAR SEPT 23/24 BOOK AT LINK BELOW:\nhttps://widget.eola.co/752/activities/tuvaa-watersports\n\nANNOUNCEMENT- WATER, SAILING OR KAYAK\n\nTUVAA’s partnership with Active Nation in watersports is open to everyone in our community!`,
+      image: '/images/kayak-sailing.jpg',
+      category: 'Youth',
+      published: true,
+      isPublished: true,
+      publishedAt: new Date('2025-05-21T12:00:00Z'),
+    },
+  })
+
+  const newsMenSwimming = await prisma.newsPost.upsert({
+    where: { slug: 'men-swimming' },
+    update: {},
+    create: {
+      slug: 'men-swimming',
+      title: 'MEN SWIMMING',
+      excerpt: 'TUVAA is working in partnership with Active Nation to provide supportive swimming sessions for men.',
+      content: 'TUVAA is working in partnership with Active Nation to provide supportive swimming sessions for men.',
+      image: '/images/men-swimming.jpg',
+      category: 'Sports',
+      published: true,
+      isPublished: true,
+      publishedAt: new Date('2025-05-11T12:00:00Z'),
+    },
+  })
+
+  const newsWomenSwimming = await prisma.newsPost.upsert({
+    where: { slug: 'womens-swimming' },
+    update: {},
+    create: {
+      slug: 'womens-swimming',
+      title: 'Women’s Swimming',
+      excerpt: 'Accessible swimming lessons support health, confidence and wellbeing for women in our community.',
+      content: 'Accessible swimming lessons support health, confidence and wellbeing for women in our community.',
+      image: '/images/women-swimming.jpg',
+      category: 'Sports',
+      published: true,
+      isPublished: true,
+      publishedAt: new Date('2025-05-10T12:00:00Z'),
+    },
+  })
+
+  const news1 = await prisma.newsPost.upsert({
+    where: { slug: 'bbam-fundraiser-gala-and-awards-night' },
+    update: {},
+    create: {
+      slug: 'bbam-fundraiser-gala-and-awards-night',
+      title: 'BBAM fundraiser, gala and awards night',
+      excerpt: 'The United Voice of African Associations celebrated achievement, creativity and community at the BBAM fundraiser and awards evening.',
+      content: 'The United Voice of African Associations celebrated achievement, creativity and community at the BBAM fundraiser and awards evening. The event brought together entrepreneurs, community leaders, and artists to highlight the vibrant achievements of our members while raising vital funds for youth programmes across Southampton.',
+      image: '/images/bbam-gala.jpg',
+      category: 'Festival',
+      published: true,
+      isPublished: true,
+      publishedAt: new Date('2024-02-07T12:00:00Z'),
+    },
+  })
+
+  const news2 = await prisma.newsPost.upsert({
+    where: { slug: 'black-history-month-story-telling' },
+    update: {},
+    create: {
+      slug: 'black-history-month-story-telling',
+      title: 'Black History Month – Story Telling',
+      excerpt: 'A memorable evening of history, lived experience and stories shared by members of our community.',
+      content: 'A memorable evening of history, lived experience and stories shared by members of our community. We reflected on the powerful heritage and contributions of African diaspora communities in Hampshire, honoring our past while inspiring the next generation.',
+      image: '/images/hidden-histories.png',
+      category: 'Culture',
+      published: true,
+      isPublished: true,
+      publishedAt: new Date('2023-11-17T12:00:00Z'),
+    },
+  })
+
+  const news3 = await prisma.newsPost.upsert({
+    where: { slug: 'grant-to-the-united-voice-of-africa-association-southampton' },
+    update: {},
+    create: {
+      slug: 'grant-to-the-united-voice-of-africa-association-southampton',
+      title: 'Grant to the United Voice of Africa Association Southampton',
+      excerpt: 'Support for TUVAA will help strengthen local programmes, community outreach and opportunities.',
+      content: 'Support for TUVAA will help strengthen local programmes, community outreach and opportunities. This funding allows TUVAA to expand essential support services, educational workshops, and cultural celebrations across Southampton and surrounding areas.',
+      image: '/images/tuva1-400x450.jpg',
+      category: 'Community',
+      published: true,
+      isPublished: true,
+      publishedAt: new Date('2023-11-01T12:00:00Z'),
+    },
+  })
+
+  // Seed Projects
+  const project1 = await prisma.project.upsert({
+    where: { slug: 'king-mzilikazi-commemoration' },
+    update: {},
+    create: {
+      slug: 'king-mzilikazi-commemoration',
+      title: 'King Mzilikazi Commemoration',
+      excerpt: "Retracing King Lobengula's emmisarries' journey from Cape Town, South Africa, to Southampton to meet with Queen Victoria in 1898.",
+      content: "The King Mzilikazi Commemoration is one of TUVAA's most significant cultural preservation projects. Our annual commemoration brings together Ndebele and Zulu diaspora communities, alongside the wider Hampshire community, to celebrate and learn about this rich history.",
+      image: '/images/King-Mzilikazi-Commemoration.jpg',
+      isPublished: true,
+      order: 0,
+    },
+  })
+
+  const project2 = await prisma.project.upsert({
+    where: { slug: 'mental-health-project' },
+    update: {},
+    create: {
+      slug: 'mental-health-project',
+      title: 'Mental Health Project',
+      excerpt: 'TUVAA has forged and established partnerships with various groups and organisations with similar interests.',
+      content: "Mental health remains a heavily stigmatized subject within many minority ethnic communities. TUVAA's Mental Health Project aims to break down these barriers by creating safe, non-judgmental environments where Black men and women can talk, share experiences, and receive support.",
+      image: '/images/youth.jpg',
+      isPublished: true,
+      order: 1,
+    },
+  })
+
+  const project3 = await prisma.project.upsert({
+    where: { slug: 'youth-project' },
+    update: {},
+    create: {
+      slug: 'youth-project',
+      title: 'Youth Project',
+      excerpt: 'TUVAA have run and is running several youth projects including art projects, theatre, football, water sports, swimming, and heritage projects.',
+      content: "TUVAA's Youth Project is designed to provide constructive channels for youths from underrepresented backgrounds to build confidence, discover their potential, and acquire critical life skills.",
+      image: '/images/youth.png',
+      isPublished: true,
+      order: 2,
+    },
+  })
+
+  // Seed Services
+  const service1 = await prisma.service.upsert({
+    where: { slug: 'health-and-wellbeing-information' },
+    update: {},
+    create: {
+      slug: 'health-and-wellbeing-information',
+      title: 'Health and Wellbeing Information',
+      excerpt: 'Scan & Donate   Southampton Health and Support Information 1. Emergencies For any health-related emergency, please dial 999 for an ambulance. Calls to this number are always free. 2. Mental Health Support If you need immediate help with your mental health: NHS Urgent Mental Health Triage: Call 111 and…',
+      content: 'Scan & Donate   Southampton Health and Support Information\n\n1. Emergencies\nFor any health-related emergency, please dial 999 for an ambulance. Calls to this number are always free.\n\n2. Mental Health Support\nIf you need immediate help with your mental health: NHS Urgent Mental Health Triage: Call 111 and mental health support team will assist you. TUVAA works in close partnership with local health initiatives to ensure community members can access resources and support systems without language or cultural barriers.',
+      image: '/images/health-wellbeing-info.jpg',
+      isPublished: true,
+      publishedAt: new Date('2024-10-15T12:00:00Z'),
+      comments: 0,
+    },
+  })
+
+  const service2 = await prisma.service.upsert({
+    where: { slug: 'youth-empowerment' },
+    update: {},
+    create: {
+      slug: 'youth-empowerment',
+      title: 'Youth Empowerment',
+      excerpt: 'We identify black talents at an ear age, create pathways to nurture and create opportunities for them to realize their potential. We set up TUVAA football club to create opportunities for both boys and girls to realize their potential in sports. Also create them a pathway to become coaches, referees,…',
+      content: 'We identify black talents at an ear age, create pathways to nurture and create opportunities for them to realize their potential. We set up TUVAA football club to create opportunities for both boys and girls to realize their potential in sports. Also create them a pathway to become coaches, referees, and leaders to help them realize their potential in sports and beyond.',
+      image: '/images/youth-empowerment.jpg',
+      isPublished: true,
+      publishedAt: new Date('2022-04-19T12:00:00Z'),
+      comments: 0,
+    },
+  })
+
+  const service3 = await prisma.service.upsert({
+    where: { slug: 'newtown-community-support-centre' },
+    update: {},
+    create: {
+      slug: 'newtown-community-support-centre',
+      title: 'NEWTOWN COMMUNITY SUPPORT CENTRE',
+      excerpt: 'An opened access volunteer led service for people living in Bevois and its nearby wards. We provide support in completing a wide range of online forms including visa, passport, benefits, job applications and housing. We also sign post to a wide range of professional services across the city including Citizens…',
+      content: 'An opened access volunteer led service for people living in Bevois and its nearby wards. We provide support in completing a wide range of online forms including visa, passport, benefits, job applications and housing. We also sign post to a wide range of professional services across the city including Citizens Advice, local authority services, and various health and support organizations.',
+      image: '/images/newtown-community-centre.jpg',
+      isPublished: true,
+      publishedAt: new Date('2022-04-19T12:00:00Z'),
+      comments: 1,
+    },
+  })
+
+  const service4 = await prisma.service.upsert({
+    where: { slug: 'education-and-empowerment' },
+    update: {},
+    create: {
+      slug: 'education-and-empowerment',
+      title: 'EDUCATION AND EMPOWERMENT',
+      excerpt: 'TUVAA believes in empowerment and the bases of which is education. We run English classes for non-English speaks for 6 years to grasped basic communication skills in English. They are then supported and encouraged to register with ofsted registered training providers. We also run computer and internet training for 5…',
+      content: 'TUVAA believes in empowerment and the bases of which is education. We run English classes for non-English speaks for 6 years to grasped basic communication skills in English. They are then supported and encouraged to register with ofsted registered training providers. We also run computer and internet training for 5 years to help participants build essential IT skills and confidence.',
+      image: '/images/education-empowerment.jpg',
+      isPublished: true,
+      publishedAt: new Date('2022-04-19T12:00:00Z'),
+      comments: 0,
+    },
+  })
+
+  const service5 = await prisma.service.upsert({
+    where: { slug: 'poverty-and-hunger' },
+    update: {},
+    create: {
+      slug: 'poverty-and-hunger',
+      title: 'POVERTY AND HUNGER',
+      excerpt: 'TUVAA has run the Fairshare food project for several years and distributed thousands of food items. We also partner with Feed The Community to extend food support.',
+      content: 'TUVAA has run the Fairshare food project for several years and distributed thousands of food items. We also partner with Feed The Community to extend food support. In periods of high living costs, these initiatives serve as a vital lifeline for vulnerable families.',
+      image: '/images/community-meeting.jpg',
+      isPublished: true,
+      publishedAt: new Date('2022-04-19T12:00:00Z'),
+      comments: 0,
+    },
+  })
+
+  const service6 = await prisma.service.upsert({
+    where: { slug: 'bame-physical-health-and-wellbeing' },
+    update: {},
+    create: {
+      slug: 'bame-physical-health-and-wellbeing',
+      title: 'BAME PHYSICAL HEALTH AND WELLBEING',
+      excerpt: 'We pride ourselves on promoting the health and wellbeing of our community through accessible programmes, activities and support.',
+      content: 'We pride ourselves on promoting the health and wellbeing of our community through accessible programmes, activities and support. Through active fitness workshops, walking clubs, nutrition webinars, and sports leagues, we enable community members of all ages to adopt healthier and happier lifestyles.',
+      image: '/images/football-park.jpg',
+      isPublished: true,
+      publishedAt: new Date('2022-04-19T12:00:00Z'),
+      comments: 0,
+    },
+  })
+
+  const service7 = await prisma.service.upsert({
+    where: { slug: 'promoting-african-cultures-and-traditions' },
+    update: {},
+    create: {
+      slug: 'promoting-african-cultures-and-traditions',
+      title: 'Promoting African Cultures and Traditions',
+      excerpt: 'Celebrating, showcasing and preserving African heritage, music, dance and arts.',
+      content: 'TUVAA hosts events, workshops and cultural festivals celebrating African traditions across Hampshire.',
+      image: '/images/african-dance.jpg',
+      isPublished: true,
+      publishedAt: new Date('2020-08-31T12:00:00Z'),
+      comments: 0,
+    },
+  })
+
+  const service8 = await prisma.service.upsert({
+    where: { slug: 'bame-mental-health-and-wellbeing' },
+    update: {},
+    create: {
+      slug: 'bame-mental-health-and-wellbeing',
+      title: 'BAME Mental Health and Wellbeing',
+      excerpt: 'Community support groups, sports, swimming, and counselling referrals.',
+      content: 'Providing safe, culturally-informed spaces for physical and mental health support.',
+      image: '/images/african-family-group.jpg',
+      isPublished: true,
+      publishedAt: new Date('2020-08-31T12:00:00Z'),
+      comments: 0,
+    },
+  })
+
+  const service9 = await prisma.service.upsert({
+    where: { slug: 'hidden-histories' },
+    update: {},
+    create: {
+      slug: 'hidden-histories',
+      title: 'HIDDEN HISTORIES',
+      excerpt: 'Unearthing local African histories and contributions to the Hampshire community.',
+      content: 'Unearthing local African histories and contributions to the Hampshire community. We worked with Dr Cheryl Butler to publish a book called Hidden History, celebrating important stories and overlooked community heritage in the Hampshire region.',
+      image: '/images/hidden-histories.png',
+      isPublished: true,
+      publishedAt: new Date('2026-07-18T12:00:00Z'),
+      comments: 0,
+    },
+  })
+
+  const service10 = await prisma.service.upsert({
+    where: { slug: 'community-street-cleaning' },
+    update: {},
+    create: {
+      slug: 'community-street-cleaning',
+      title: 'Community Street Cleaning',
+      excerpt: 'Community action to clean and maintain public spaces in Southampton.',
+      content: 'TUVAA organizes volunteer street cleaning projects across local neighborhoods in Southampton.',
+      image: '/images/community-street-cleaning.jpg',
+      isPublished: true,
+      publishedAt: new Date('2017-12-07T12:00:00Z'),
+      comments: 0,
+    },
+  })
+
+  // Seed Directory Listings for Community Groups
+  const group1 = await prisma.directoryListing.upsert({
+    where: { slug: 'gambia-kaffo-southampton' },
+    update: {},
+    create: {
+      type: 'community_group',
+      title: 'Gambia Kaffo Southampton',
+      slug: 'gambia-kaffo-southampton',
+      category: 'Gambian Community',
+      description: 'Connecting Gambian families and supporting culture, welfare and community participation.',
+      image: '/images/african-family-group.jpg',
+      email: 'info@tuvaa.org.uk',
+      isPublished: true,
+      order: 0,
+    },
+  })
+
+  const group2 = await prisma.directoryListing.upsert({
+    where: { slug: 'nigerian-association-hampshire' },
+    update: {},
+    create: {
+      type: 'community_group',
+      title: 'Nigerian Association Hampshire',
+      slug: 'nigerian-association-hampshire',
+      category: 'Nigerian Community',
+      description: 'Networking, cultural events and practical support for Nigerian residents.',
+      image: '/images/community-meeting.jpg',
+      email: 'info@tuvaa.org.uk',
+      isPublished: true,
+      order: 1,
+    },
+  })
+
+  const group3 = await prisma.directoryListing.upsert({
+    where: { slug: 'zimbabwean-community-network' },
+    update: {},
+    create: {
+      type: 'community_group',
+      title: 'Zimbabwean Community Network',
+      slug: 'zimbabwean-community-network',
+      category: 'Zimbabwean Community',
+      description: 'Family welfare, integration support and cultural programmes.',
+      image: '/images/events-cultural.jpg',
+      email: 'info@tuvaa.org.uk',
+      isPublished: true,
+      order: 2,
+    },
+  })
+
+  const group4 = await prisma.directoryListing.upsert({
+    where: { slug: 'malawi-community-hampshire' },
+    update: {},
+    create: {
+      type: 'community_group',
+      title: 'Malawi Community Hampshire',
+      slug: 'malawi-community-hampshire',
+      category: 'Malawian Community',
+      description: 'A supportive forum linking members with events and local opportunities.',
+      image: '/images/newtown-community-centre.jpg',
+      email: 'info@tuvaa.org.uk',
+      isPublished: true,
+      order: 3,
+    },
+  })
+
   console.log('Seed completed:')
-  console.log({ superAdmin, admin, subAdmin, tester, campaignYoungPeople, campaignWomen, campaignBbam, event1, event2, event3, event4, event5 })
+  console.log({ superAdmin, admin, subAdmin, tester, campaignYoungPeople, campaignWomen, campaignBbam, event1, event2, event3, news1, news2, news3, project1, project2, project3, service1, service2, service3, service4, service5, service6, service7, service8, service9, service10, group1, group2, group3, group4 })
+
 }
 
 main()

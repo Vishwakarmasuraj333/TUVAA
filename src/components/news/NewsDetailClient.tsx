@@ -39,7 +39,7 @@ export default function NewsDetailClient({ post }: NewsDetailClientProps) {
       })
     : 'May 21, 2022'
 
-  const handleCommentSubmit = (e: React.FormEvent) => {
+  const handleCommentSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!commentName || !commentEmail || !commentText) {
       toast.error('Please fill in all required fields.')
@@ -47,25 +47,42 @@ export default function NewsDetailClient({ post }: NewsDetailClientProps) {
     }
 
     setIsSubmitting(true)
-    const authorName = commentName
-    const newComment = {
-      name: commentName,
-      date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
-      text: commentText,
-    }
+    try {
+      const res = await fetch('/api/comments', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          postId: post.id,
+          name: commentName,
+          email: commentEmail,
+          message: commentText,
+        }),
+      })
 
-    setTimeout(() => {
-      setComments((prev) => [newComment, ...prev])
-      toast.success(`Thank you, ${authorName}! Your comment has been posted successfully.`)
+      const resData = await res.json()
+      if (!res.ok) throw new Error(resData.error || 'Failed to submit comment')
+
+      toast.success('Your comment has been submitted and is pending approval!')
+      setComments((prev) => [
+        {
+          name: commentName,
+          date: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }),
+          text: commentText,
+        },
+        ...prev,
+      ])
       setCommentName('')
       setCommentEmail('')
       setCommentText('')
       setSaveInfo(false)
+    } catch (err: any) {
+      toast.error(err.message || 'Error submitting comment.')
+    } finally {
       setIsSubmitting(false)
-    }, 400)
+    }
   }
 
-  // Gallery images for kayak post or fallback
+  // Gallery photos if available
   const galleryPhotos = post.extraImages && post.extraImages.length > 0
     ? post.extraImages
     : post.slug === 'kayak-and-sailing'
@@ -82,7 +99,7 @@ export default function NewsDetailClient({ post }: NewsDetailClientProps) {
           {/* Main Hero Image */}
           <div className="relative aspect-[16/9] w-full rounded overflow-hidden shadow-md bg-[#faf8ef]">
             <Image
-              src={post.image}
+              src={post.image || '/images/event-placeholder.jpg'}
               alt={post.title}
               fill
               priority
@@ -110,47 +127,8 @@ export default function NewsDetailClient({ post }: NewsDetailClientProps) {
           </div>
 
           {/* Article Main Text Content */}
-          <div className="space-y-6 text-[#5b4b43] text-sm sm:text-base leading-relaxed font-sans">
-            <p>
-              TUVAA in partnership with Active Nation and the Royal Yacht Association. For more information and how you can register please click the link below:
-            </p>
-
-            {/* Clickable Link 1 */}
-            <p className="bg-[#faf8ef] p-3.5 rounded border-l-4 border-[#DB9E30]">
-              <a
-                href="https://widget.eola.co/550/activities/7zcf"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-[#DB9E30] font-bold hover:underline break-all text-sm sm:text-base"
-              >
-                https://widget.eola.co/550/activities/7zcf
-              </a>
-            </p>
-
-            <p className="font-semibold text-[#35170f]">
-              LAST CHANCE FOR KAYAKING THIS YEAR SEPT 23/24 BOOK AT LINK BELOW
-            </p>
-
-            {/* Clickable Link 2 */}
-            <p className="bg-[#faf8ef] p-3.5 rounded border-l-4 border-[#DB9E30]">
-              <a
-                href="https://widget.eola.co/752/activities/tuvaa-watersports"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-[#DB9E30] font-bold hover:underline break-all text-sm sm:text-base"
-              >
-                https://widget.eola.co/752/activities/tuvaa-watersports
-              </a>
-            </p>
-
-            {/* Sub-Section Heading */}
-            <h2 className="font-cinzel text-xl sm:text-2xl font-bold uppercase tracking-wider text-[#35170f] pt-4 border-t border-[#eee7dc]">
-              ANNOUNCEMENT- WATER, SAILING OR KAYAK
-            </h2>
-
-            <p className="text-[#5b4b43] leading-relaxed">
-              TUVAA’s partnership with Active Nation in watersports is open to everyone in our community! Join us for fun, confidence building, and learning new water skills in a safe, supportive environment.
-            </p>
+          <div className="space-y-6 text-[#5b4b43] text-sm sm:text-base leading-relaxed font-sans whitespace-pre-line">
+            {post.content || post.excerpt}
           </div>
 
           {/* Embedded Article Photos */}

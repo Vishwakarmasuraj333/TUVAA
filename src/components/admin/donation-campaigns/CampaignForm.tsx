@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useEffect } from 'react'
+import CloudinaryImageUpload from '@/components/admin/CloudinaryImageUpload'
 
 const formSchema = z.object({
   title: z.string().min(1, 'Title is required'),
@@ -90,21 +91,15 @@ export default function CampaignForm({ initialData, onSubmit, isSubmitting }: Ca
         )}
       </div>
 
-      {/* Image Path */}
-      <div className="space-y-1.5">
-        <label className="text-[10px] font-cinzel font-bold text-[#35170f] uppercase tracking-widest block">
-          Image Path / URL
-        </label>
-        <input
-          type="text"
-          {...register('image')}
-          className="w-full bg-[#fdfcfb] border border-[#e8dfc8] rounded-sm px-4 py-2.5 text-xs focus:outline-none focus:border-[#DB9E30] text-[#35170f]"
-          placeholder="/images/donate-young-people.jpg"
-        />
-        {errors.image && (
-          <p className="text-xs text-red-500 font-semibold">{errors.image.message}</p>
-        )}
-      </div>
+      {/* Image Path with Cloudinary Upload */}
+      <CloudinaryImageUpload
+        value={watch('image')}
+        onChange={(url) => setValue('image', url, { shouldValidate: true })}
+        label="Campaign Image (Cloudinary)"
+        placeholder="/images/donate-young-people.jpg"
+        error={errors.image?.message}
+        required
+      />
 
       {/* Goal Amount */}
       <div className="space-y-1.5">
