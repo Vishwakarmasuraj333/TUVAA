@@ -201,13 +201,12 @@ export default function Footer() {
                 </motion.a>
                 <motion.a
                   whileHover={{ scale: 1.08, y: -4 }}
-                  href="#"
+                  href="https://www.instagram.com/bbamfestival"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="h-[52px] w-[52px] bg-[#DB9E30] hover:bg-[#57a68f] text-white rounded-md transition-colors duration-300 cursor-pointer flex items-center justify-center shadow-md"
+                  className="h-[52px] w-[52px] bg-[#DB9E30] hover:bg-[#57a68f] text-white rounded-md transition-colors duration-300 cursor-pointer flex items-center justify-center shadow-md focus:outline-none focus:ring-2 focus:ring-white"
                   aria-label="Instagram"
                 >
-                  {/* TODO: Replace Instagram URL with official TUVAA Instagram link. */}
                   <Instagram className="h-6 w-6 text-white" />
                 </motion.a>
               </div>

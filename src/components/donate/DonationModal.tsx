@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { X, Loader2 } from 'lucide-react'
 import { Campaign } from '@/data/donationCampaigns'
+import { isHumanName, isPhoneNumber } from '@/lib/validations/rules'
 
 interface DonationModalProps {
   campaign: Campaign
@@ -49,8 +50,9 @@ export default function DonationModal({ campaign, onClose }: DonationModalProps)
 
   const validate = () => {
     if (!finalAmount || finalAmount <= 0) return 'Please enter a valid donation amount.'
-    if (!fullName.trim() || fullName.trim().length < 2) return 'Full name is required.'
-    if (!email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return 'A valid email address is required.'
+    if (!fullName.trim() || !isHumanName(fullName)) return 'Please enter a valid name.'
+    if (!email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) return 'A valid email address is required.'
+    if (phone && phone.trim() && !isPhoneNumber(phone)) return 'Please enter a valid phone number.'
     return null
   }
 

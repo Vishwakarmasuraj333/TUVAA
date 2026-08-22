@@ -89,7 +89,9 @@ export default function MembershipForm() {
             Contact Number *
           </label>
           <input
-            type="text"
+            type="tel"
+            inputMode="tel"
+            maxLength={20}
             id="contactNumber"
             placeholder="07123456789"
             {...register('contactNumber')}

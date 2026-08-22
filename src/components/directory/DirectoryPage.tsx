@@ -32,10 +32,36 @@ export default function DirectoryPage({ type, listings }: { type: DirectoryType;
                     {listing.category && <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.18em] text-[#DB9E30]">{listing.category}</p>}
                     <h2 className="font-cinzel text-xl font-bold leading-tight">{listing.title}</h2>
                     <p className="mt-3 text-sm leading-7 text-[#8b8178]">{listing.description}</p>
-                    <div className="mt-5 flex flex-wrap gap-x-5 gap-y-2 border-t border-[#eee7dc] pt-4 text-xs text-[#6f625a]">
-                      {listing.email && <a href={`mailto:${listing.email}`} className="inline-flex items-center gap-1.5 hover:text-[#57a68f]"><Mail className="h-3.5 w-3.5" /> Email</a>}
-                      {listing.phone && <a href={`tel:${listing.phone}`} className="inline-flex items-center gap-1.5 hover:text-[#57a68f]"><Phone className="h-3.5 w-3.5" /> Call</a>}
-                      {listing.website && <a href={listing.website} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 hover:text-[#57a68f]"><ExternalLink className="h-3.5 w-3.5" /> Website</a>}
+                    <div className="mt-5 flex flex-wrap gap-2.5 border-t border-[#eee7dc] pt-4 text-xs text-[#6f625a]">
+                      {(listing.email || listing.type === 'musician') && (
+                        <a
+                          href={`mailto:${listing.email || 'info@tuvaa.org.uk'}`}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 border border-[#dcd4c8] rounded hover:border-[#DB9E30] hover:text-[#57a68f] transition-colors focus:outline-none focus:ring-1 focus:ring-[#DB9E30] bg-white font-medium"
+                          aria-label={`Email ${listing.title}`}
+                        >
+                          <Mail className="h-3.5 w-3.5" /> Email
+                        </a>
+                      )}
+                      {listing.phone && (
+                        <a
+                          href={`tel:${listing.phone}`}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 border border-[#dcd4c8] rounded hover:border-[#DB9E30] hover:text-[#57a68f] transition-colors focus:outline-none focus:ring-1 focus:ring-[#DB9E30] bg-white font-medium"
+                          aria-label={`Call ${listing.title}`}
+                        >
+                          <Phone className="h-3.5 w-3.5" /> Call
+                        </a>
+                      )}
+                      {listing.website && (
+                        <a
+                          href={listing.website}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 border border-[#dcd4c8] rounded hover:border-[#DB9E30] hover:text-[#57a68f] transition-colors focus:outline-none focus:ring-1 focus:ring-[#DB9E30] bg-white font-medium"
+                          aria-label={`Visit website of ${listing.title}`}
+                        >
+                          <ExternalLink className="h-3.5 w-3.5" /> Website
+                        </a>
+                      )}
                     </div>
                     {type === 'community_group' && <Link href="/african-community-group" className="btn-primary-hover mt-5 inline-block rounded-sm px-5 py-2.5 font-cinzel text-[10px] font-bold uppercase tracking-widest">Register a group</Link>}
                   </div>

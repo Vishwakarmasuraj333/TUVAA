@@ -1,12 +1,13 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { z } from 'zod'
+import { humanNameSchema } from '@/lib/validations/rules'
 
 const commentSchema = z.object({
-  postId: z.string().min(1, 'Post ID is required'),
-  name: z.string().min(1, 'Name is required'),
-  email: z.string().email('Valid email is required'),
-  message: z.string().min(2, 'Comment message is required'),
+  postId: z.string().trim().min(1, 'Post ID is required'),
+  name: humanNameSchema,
+  email: z.string().trim().email('Valid email is required'),
+  message: z.string().trim().min(2, 'Comment message is required'),
 })
 
 export async function POST(request: Request) {

@@ -31,12 +31,22 @@ export default async function CommunityGroupsPage() {
                   <Users2 className="h-6 w-6" />
                 </div>
                 <h2 className="font-cinzel text-xl md:text-[20px] font-bold uppercase mb-4 text-[#35170f]">{group.title}</h2>
-                <p className="text-xs leading-6 text-[#8b8178] line-clamp-4">{group.description}</p>
-                {group.email && (
-                  <a href={`mailto:${group.email}`} className="mt-4 text-[11px] font-bold font-cinzel text-[#DB9E30] hover:text-[#57a68f]">
-                    Contact Group
-                  </a>
-                )}
+                <p className="text-xs leading-6 text-[#8b8178] line-clamp-4 mb-2">{group.description}</p>
+                <a
+                  href={
+                    group.email
+                      ? `mailto:${group.email}`
+                      : group.website
+                      ? group.website
+                      : 'mailto:info@tuvaa.org.uk'
+                  }
+                  target={group.website && !group.email ? '_blank' : undefined}
+                  rel={group.website && !group.email ? 'noopener noreferrer' : undefined}
+                  className="mt-5 inline-flex items-center justify-center px-4 py-2 border border-[#DB9E30] rounded-sm text-[11px] font-bold font-cinzel text-[#DB9E30] hover:bg-[#DB9E30] hover:text-white transition-colors duration-200 tracking-wider uppercase focus:outline-none focus:ring-2 focus:ring-[#DB9E30]"
+                  aria-label={`Contact ${group.title}`}
+                >
+                  Contact Group
+                </a>
               </div>
             ))}
           </div>

@@ -1,13 +1,14 @@
 import { NextResponse } from 'next/server'
 import { z } from 'zod'
 import { prisma } from '@/lib/prisma'
+import { humanNameSchema, optionalPhoneNumberSchema } from '@/lib/validations/rules'
 
 const registrationSchema = z.object({
-  fullName: z.string().min(1, 'Full name is required'),
-  email: z.string().email('Valid email is required'),
-  phone: z.string().optional().nullable(),
+  fullName: humanNameSchema,
+  email: z.string().trim().email('Valid email is required'),
+  phone: optionalPhoneNumberSchema,
   message: z.string().optional().nullable(),
-  eventSlug: z.string().min(1, 'Event slug is required'),
+  eventSlug: z.string().trim().min(1, 'Event slug is required'),
 })
 
 export async function POST(request: Request) {
@@ -18,7 +19,7 @@ export async function POST(request: Request) {
     const parsed = registrationSchema.safeParse(body)
     if (!parsed.success) {
       return NextResponse.json(
-        { error: 'Invalid registration details.', details: parsed.error.format() },
+        { error: 'Invalid registration details.', message: parsed.error.issues[0]?.message || 'Invalid registration details.', details: parsed.error.format() },
         { status: 400 }
       )
     }

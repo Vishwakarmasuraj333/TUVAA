@@ -2,11 +2,12 @@ import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { z } from 'zod'
 import Stripe from 'stripe'
+import { humanNameSchema } from '@/lib/validations/rules'
 
 const DonationSchema = z.object({
-  campaignId: z.string().min(1, 'Please select a campaign'),
-  donorName: z.string().min(2, 'Name must be at least 2 characters'),
-  donorEmail: z.string().email('Please enter a valid email address'),
+  campaignId: z.string().trim().min(1, 'Please select a campaign'),
+  donorName: humanNameSchema,
+  donorEmail: z.string().trim().email('Please enter a valid email address'),
   amount: z.number().min(1, 'Donation amount must be at least £1'),
   paymentMethod: z.enum(['STRIPE', 'OFFLINE']),
 })

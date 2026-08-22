@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { Calendar, User, MessageSquare, Twitter, Facebook, Linkedin, Share2 } from 'lucide-react'
 import { toast } from 'sonner'
 import BlogSidebar from '@/components/common/BlogSidebar'
+import { isHumanName } from '@/lib/validations/rules'
 
 interface NewsDetailClientProps {
   post: {
@@ -41,8 +42,13 @@ export default function NewsDetailClient({ post }: NewsDetailClientProps) {
 
   const handleCommentSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!commentName || !commentEmail || !commentText) {
+    if (!commentName.trim() || !commentEmail.trim() || !commentText.trim()) {
       toast.error('Please fill in all required fields.')
+      return
+    }
+
+    if (!isHumanName(commentName)) {
+      toast.error('Please enter a valid name.')
       return
     }
 

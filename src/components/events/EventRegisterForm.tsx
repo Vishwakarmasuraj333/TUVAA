@@ -6,11 +6,19 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { toast } from 'sonner'
 import { motion } from 'framer-motion'
+import { humanNameSchema } from '@/lib/validations'
+import { isPhoneNumber } from '@/lib/validations/rules'
 
 const registerSchema = z.object({
-  fullName: z.string().min(1, 'Full name is required'),
-  email: z.string().email('Valid email is required'),
-  phone: z.string().optional(),
+  fullName: humanNameSchema,
+  email: z.string().trim().email('Please enter a valid email address'),
+  phone: z
+    .string()
+    .trim()
+    .optional()
+    .refine((val) => !val || isPhoneNumber(val), {
+      message: 'Please enter a valid phone number.',
+    }),
   message: z.string().optional(),
   acceptedTerms: z.literal(true, {
     message: 'You must accept the terms and conditions.',
@@ -143,10 +151,17 @@ export default function EventRegisterForm({ eventSlug, eventName }: EventRegiste
           </label>
           <input
             type="tel"
+            inputMode="tel"
+            maxLength={20}
             {...register('phone')}
-            className="w-full bg-white border border-zinc-300 focus:ring-[#DB9E30] rounded-sm px-4 py-2.5 text-sm text-zinc-800 focus:outline-none focus:ring-1 focus:border-[#DB9E30] transition-shadow"
+            className={`w-full bg-white border ${
+              errors.phone ? 'border-red-500 focus:ring-red-500' : 'border-zinc-300 focus:ring-[#DB9E30]'
+            } rounded-sm px-4 py-2.5 text-sm text-zinc-800 focus:outline-none focus:ring-1 focus:border-[#DB9E30] transition-shadow`}
             placeholder="+44 7843 106868"
           />
+          {errors.phone && (
+            <p className="text-xs text-red-500 font-medium">{errors.phone.message}</p>
+          )}
         </div>
 
         {/* Message */}
@@ -193,3 +208,4 @@ export default function EventRegisterForm({ eventSlug, eventName }: EventRegiste
     </div>
   )
 }
+

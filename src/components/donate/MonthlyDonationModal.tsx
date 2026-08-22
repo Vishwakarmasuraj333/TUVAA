@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { X, Loader2 } from 'lucide-react'
+import { isHumanName } from '@/lib/validations/rules'
 
 interface MonthlyDonationModalProps {
   onClose: () => void
@@ -24,8 +25,8 @@ export default function MonthlyDonationModal({ onClose }: MonthlyDonationModalPr
   }, [])
 
   const validate = () => {
-    if (!fullName.trim() || fullName.trim().length < 2) return 'Full name is required.'
-    if (!email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return 'A valid email address is required.'
+    if (!fullName.trim() || !isHumanName(fullName)) return 'Please enter a valid name.'
+    if (!email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) return 'A valid email address is required.'
     if (!monthlyAmount || parseFloat(monthlyAmount) <= 0) return 'Please enter a valid monthly amount.'
     return null
   }

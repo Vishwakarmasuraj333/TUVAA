@@ -109,21 +109,19 @@ export default function NewsletterForm() {
           className="h-3.5 w-3.5 accent-[#DB9E30] cursor-pointer rounded border-white/10 text-[#DB9E30] focus:ring-[#DB9E30]/30 bg-black/40"
         />
         <label htmlFor="acceptedTerms" className="text-[11px] sm:text-xs text-zinc-400 hover:text-white cursor-pointer text-left select-none leading-none">
-          I have read and agree to the <span className="text-zinc-300 underline hover:text-[#DB9E30] transition-colors">terms & conditions</span>
+          I have read and agree to the{' '}
+          <a
+            href="/privacy-policy"
+            className="text-zinc-300 underline hover:text-[#DB9E30] transition-colors"
+          >
+            terms & conditions
+          </a>
         </label>
       </div>
       
       {errors.acceptedTerms && (
         <p className="text-xs text-red-400 text-left block mt-2 pl-1">{errors.acceptedTerms.message}</p>
       )}
-
-      <div className="text-[11px] text-[#7f7a75] text-left leading-normal mt-[24px]">
-        This site is protected by reCAPTCHA and the Google{' '}
-        <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" className="text-zinc-400 hover:text-[#DB9E30] underline transition-colors">Privacy Policy</a>{' '}
-        and{' '}
-        <a href="https://policies.google.com/terms" target="_blank" rel="noopener noreferrer" className="text-zinc-400 hover:text-[#DB9E30] underline transition-colors">Terms of Service</a>{' '}
-        apply.
-      </div>
     </form>
   )
 }

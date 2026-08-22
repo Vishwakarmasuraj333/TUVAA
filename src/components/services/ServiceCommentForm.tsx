@@ -6,11 +6,12 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
 import { toast } from 'sonner'
 import { motion } from 'framer-motion'
+import { humanNameSchema } from '@/lib/validations/rules'
 
 const commentFormSchema = z.object({
-  name: z.string().min(1, 'Name is required'),
-  email: z.string().email('Valid email is required'),
-  comment: z.string().min(1, 'Comment is required'),
+  name: humanNameSchema,
+  email: z.string().trim().email('Please enter a valid email address'),
+  comment: z.string().trim().min(3, 'Comment must be at least 3 characters'),
   acceptedPrivacy: z.boolean().refine((val) => val === true, {
     message: 'You must agree to the storage and handling of your data.',
   }),

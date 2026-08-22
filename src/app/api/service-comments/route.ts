@@ -2,12 +2,13 @@ import { NextResponse } from 'next/server'
 import { z } from 'zod'
 import { prisma } from '@/lib/prisma'
 import { Prisma } from '@prisma/client'
+import { humanNameSchema } from '@/lib/validations/rules'
 
 const commentSchema = z.object({
-  serviceSlug: z.string().min(1, 'Service identifier is required'),
-  name: z.string().min(1, 'Name is required'),
-  email: z.string().email('Valid email is required'),
-  comment: z.string().min(1, 'Comment is required'),
+  serviceSlug: z.string().trim().min(1, 'Service identifier is required'),
+  name: humanNameSchema,
+  email: z.string().trim().email('Valid email is required'),
+  comment: z.string().trim().min(3, 'Comment is required'),
   mathAnswer: z.string().optional(),
   acceptedPrivacy: z.boolean().optional(),
   saveInfo: z.boolean().optional(),
