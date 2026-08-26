@@ -2,6 +2,31 @@ import { prisma, isDbAvailable } from "@/lib/prisma"
 import { services as fallbackServices } from "@/data/services"
 import { ServiceViewModel } from "@/types/service"
 
+const DEDICATED_SERVICE_IMAGES: Record<string, string> = {
+  'community-street-cleaning': '/images/community-street-cleaning.jpg',
+  'tuvaa-music': '/images/tuvaa-music.jpg',
+  'tuvaa-enjoy': '/images/tuvaa-enjoy.jpg',
+  'bame-mental-health-and-wellbeing': '/images/bame-mental-health.jpg',
+  'poverty-and-hunger': '/images/poverty-hunger-relief.jpg',
+  'health-and-wellbeing-information': '/images/health-wellbeing-info.jpg',
+  'youth-empowerment': '/images/youth-empowerment.jpg',
+  'newtown-community-support-centre': '/images/newtown-community-centre.jpg',
+  'education-and-empowerment': '/images/education-empowerment.jpg',
+  'bame-physical-health-and-wellbeing': '/images/football-park.jpg',
+  'promoting-african-cultures-and-traditions': '/images/african-dance.jpg',
+  'hidden-histories': '/images/hidden-histories.png',
+}
+
+export function resolveServiceImage(slug?: string, existingImage?: string | null): string {
+  if (slug && DEDICATED_SERVICE_IMAGES[slug]) {
+    return DEDICATED_SERVICE_IMAGES[slug]
+  }
+  if (existingImage && existingImage.trim() !== '' && !existingImage.includes('placeholder')) {
+    return existingImage
+  }
+  return '/images/health-wellbeing-info.jpg'
+}
+
 function mapDbService(service: any): ServiceViewModel {
   return {
     id: service.id,
@@ -9,7 +34,7 @@ function mapDbService(service: any): ServiceViewModel {
     slug: service.slug,
     excerpt: service.excerpt,
     content: service.content,
-    image: service.image,
+    image: resolveServiceImage(service.slug, service.image),
     date: new Date(service.publishedAt).toLocaleDateString("en-US", {
       month: "long",
       day: "numeric",
@@ -26,7 +51,7 @@ function mapStaticService(service: any): ServiceViewModel {
     slug: service.slug,
     excerpt: service.excerpt,
     content: service.content,
-    image: service.image,
+    image: resolveServiceImage(service.slug, service.image),
     date: service.date,
     comments: service.comments,
   }
