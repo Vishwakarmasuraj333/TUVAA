@@ -68,20 +68,20 @@ export default function BBAMVolunteersSection() {
           {/* Right Text Content */}
           <div className="space-y-6 text-[#8b8178] text-sm md:text-base leading-relaxed">
             <p className="font-medium text-[#35170f]">
-              We're looking for enthusiastic and dedicated volunteers willing to give their time free to help make this event a success. Various roles are available and your lunch is on us.
+              We’re looking for enthusiastic and dedicated volunteers willing to give their time free to help make this event a success. Various roles are available and your lunch is on us.
             </p>
             <p>
-              If you're passionate about art, music, and community, we want YOU to be part of our team!
+              If you’re passionate about art, music, and community, we want YOU to be part of our team! 🤝
             </p>
             <div className="bg-[#f7f3e8] border-l-4 border-[#DB9E30] p-5 rounded-sm">
               <p className="font-semibold text-[#35170f] font-cinzel">Contact for More Information</p>
               <p className="font-medium text-zinc-700 mt-1">Call/text: +44 7843 106868</p>
             </div>
             <p>
-              Join us in celebrating African, Caribbean, and Black British cultures. Let's make this festival unforgettable!
+              Join us in celebrating African, Caribbean, and Black British cultures. Let’s make this festival unforgettable!
             </p>
             <p className="font-semibold text-[#35170f]">
-              Get involved, give your time and be part of something amazing!
+              Get involved, give your time and be part of something amazing! 🌟
             </p>
           </div>
         </div>

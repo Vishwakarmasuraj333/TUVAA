@@ -29,14 +29,14 @@ export const STATIC_EVENTS: EventData[] = [
 
 We’re looking for enthusiastic and dedicated volunteers willing to give their time free to help make this event a success. Various roles are available and your lunch is on us.
 
-If you’re passionate about art, music, and community, we want YOU to be part of our team!
+If you’re passionate about art, music, and community, we want YOU to be part of our team! 🤝
 
 Contact for More Information
 Call/text: +44 7843 106868
 
 Join us in celebrating African, Caribbean, and Black British cultures. Let’s make this festival unforgettable!
 
-Get involved, give your time and be part of something amazing!`,
+Get involved, give your time and be part of something amazing! 🌟`,
     posterImage: '/images/bbam-festival-2025.jpg',
     videoUrl: '/images/v.mp4',
     date: new Date('2025-10-12T11:00:00Z'),
