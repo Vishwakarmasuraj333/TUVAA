@@ -5,9 +5,9 @@ import { motion } from 'framer-motion'
 
 export default function CommunityStreetCleaning() {
   return (
-    <section className="relative w-full h-[480px] sm:h-[560px] lg:h-[640px] flex items-center justify-center text-center overflow-hidden select-none bg-zinc-950">
-      {/* Background Image Layer with crystal clear resolution */}
-      <div className="absolute inset-0 z-0">
+    <section className="relative w-full h-[380px] sm:h-[450px] lg:h-[520px] flex items-center justify-center text-center overflow-hidden select-none bg-zinc-950">
+      {/* Background Image Layer */}
+      <div className="absolute inset-0 z-0 select-none pointer-events-none">
         <Image
           src="/images/community-street-cleaning.jpg"
           alt="Community Street Cleaning Derby Road"
@@ -16,32 +16,26 @@ export default function CommunityStreetCleaning() {
           className="object-cover object-center"
           priority
         />
-        {/* Soft, clean dark overlay allowing photo details to shine */}
-        <div className="absolute inset-0 bg-[#0d0905]/45 z-10" />
-        <div
-          className="absolute inset-0 z-10"
-          style={{
-            background: 'linear-gradient(to bottom, rgba(13,9,5,0.40) 0%, rgba(13,9,5,0.20) 50%, rgba(13,9,5,0.60) 100%)',
-          }}
-        />
+        {/* Clean dark overlay for legibility */}
+        <div className="absolute inset-0 bg-[#0d0905]/55 z-10" />
       </div>
 
-      {/* Content Container with elegant frosted contrast */}
-      <div className="relative z-20 w-full max-w-3xl mx-auto px-6 flex flex-col items-center justify-center text-white">
+      {/* Content Container */}
+      <div className="relative z-20 w-full max-w-[780px] mx-auto px-6 flex flex-col items-center justify-center text-white space-y-4">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8, ease: 'easeOut' }}
-          className="bg-black/35 backdrop-blur-[2px] p-6 sm:p-10 rounded-lg border border-white/15 shadow-2xl space-y-4 max-w-2xl"
+          className="space-y-4"
         >
           {/* Heading */}
-          <h2 className="font-cinzel text-2xl sm:text-3xl lg:text-4xl font-extrabold uppercase tracking-wider leading-tight text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]">
+          <h2 className="font-cinzel text-2xl sm:text-3xl lg:text-[34px] font-bold uppercase tracking-wider leading-tight drop-shadow-md">
             COMMMUNITY STREET CLEANING
           </h2>
 
           {/* Paragraph */}
-          <p className="text-sm sm:text-base lg:text-lg text-white font-medium leading-relaxed font-roboto tracking-wide drop-shadow-[0_1px_4px_rgba(0,0,0,0.9)]">
+          <p className="text-xs sm:text-sm lg:text-base text-white/95 leading-relaxed font-roboto tracking-wide drop-shadow-sm max-w-2xl mx-auto">
             On the 7th of December, 2017, volunteers from the community set out to clean Derby road. supported by Believer's Loveworld Church Southampton
           </p>
         </motion.div>
