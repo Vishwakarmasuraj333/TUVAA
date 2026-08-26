@@ -5,7 +5,7 @@ import { motion } from 'framer-motion'
 
 export default function CommunityStreetCleaningSection() {
   return (
-    <section className="relative w-full h-[400px] md:h-[480px] overflow-hidden bg-zinc-950 flex items-center justify-center">
+    <section className="relative w-full h-[520px] md:h-[640px] lg:h-[700px] overflow-hidden bg-zinc-950 flex items-center justify-center">
       {/* Background Image */}
       <div className="absolute inset-0 z-0 select-none pointer-events-none">
         <Image
@@ -27,13 +27,14 @@ export default function CommunityStreetCleaningSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] as any }}
-          className="space-y-4"
+          className="space-y-4 max-w-3xl mx-auto"
         >
-          <h2 className="font-cinzel text-lg sm:text-3xl md:text-4xl lg:text-5xl font-extrabold uppercase tracking-wider leading-tight drop-shadow-md">
+          <h2 className="font-cinzel text-xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold uppercase tracking-wider leading-tight drop-shadow-md">
             COMMMUNITY STREET CLEANING
           </h2>
-          <p className="font-roboto text-sm sm:text-base md:text-lg font-medium text-zinc-100 max-w-2xl mx-auto leading-relaxed drop-shadow-sm">
-            On the 7th of December, 2017, volunteers from the community set out to clean Derby road. supported by Believer's Loveworld Church Southampton
+          <p className="font-roboto text-sm sm:text-base md:text-lg font-medium text-zinc-100 max-w-3xl mx-auto leading-relaxed drop-shadow-sm space-y-1">
+            <span className="block">On the 7th of December, 2017, volunteers from the community set out to clean Derby road.</span>
+            <span className="block">supported by Believer's Loveworld Church Southampton</span>
           </p>
         </motion.div>
       </div>
