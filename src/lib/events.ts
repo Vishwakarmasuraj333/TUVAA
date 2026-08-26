@@ -31,7 +31,7 @@ We’re looking for enthusiastic and dedicated volunteers willing to give their 
 
 If you’re passionate about art, music, and community, we want YOU to be part of our team!
 
-Contact Pee for More Information
+Contact for More Information
 Call/text: +44 7843 106868
 
 Join us in celebrating African, Caribbean, and Black British cultures. Let’s make this festival unforgettable!

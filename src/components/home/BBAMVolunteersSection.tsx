@@ -73,6 +73,10 @@ export default function BBAMVolunteersSection() {
             <p>
               If you're passionate about art, music, and community, we want YOU to be part of our team!
             </p>
+            <div className="bg-[#f7f3e8] border-l-4 border-[#DB9E30] p-5 rounded-sm">
+              <p className="font-semibold text-[#35170f] font-cinzel">Contact for More Information</p>
+              <p className="font-medium text-zinc-700 mt-1">Call/text: +44 7843 106868</p>
+            </div>
             <p>
               Join us in celebrating African, Caribbean, and Black British cultures. Let's make this festival unforgettable!
             </p>
