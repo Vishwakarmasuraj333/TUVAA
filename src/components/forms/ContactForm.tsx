@@ -88,9 +88,11 @@ export default function ContactForm() {
             type="text"
             placeholder="Your name*"
             {...register('name')}
-            className="w-full px-5 py-4 bg-[#fcfbfa] border border-[#e8dfc8] rounded-sm focus:outline-none focus:border-[#DB9E30] text-base transition-colors text-[#35170f] placeholder-[#a0988e]"
+            aria-invalid={!!errors.name}
+            aria-describedby={errors.name ? 'contact-name-error' : undefined}
+            className={`w-full px-5 py-4 bg-[#fcfbfa] border rounded-sm focus:outline-none text-base transition-colors text-[#35170f] placeholder-[#a0988e] ${errors.name ? 'border-red-400 focus:border-red-500' : 'border-[#e8dfc8] focus:border-[#DB9E30]'}`}
           />
-          {errors.name && <p className="text-xs text-red-500 mt-1">{errors.name.message}</p>}
+          {errors.name && <p id="contact-name-error" className="text-xs text-red-500 mt-1">{errors.name.message}</p>}
         </div>
 
         {/* Email Input */}
@@ -99,9 +101,11 @@ export default function ContactForm() {
             type="email"
             placeholder="Your e-mail*"
             {...register('email')}
-            className="w-full px-5 py-4 bg-[#fcfbfa] border border-[#e8dfc8] rounded-sm focus:outline-none focus:border-[#DB9E30] text-base transition-colors text-[#35170f] placeholder-[#a0988e]"
+            aria-invalid={!!errors.email}
+            aria-describedby={errors.email ? 'contact-email-error' : undefined}
+            className={`w-full px-5 py-4 bg-[#fcfbfa] border rounded-sm focus:outline-none text-base transition-colors text-[#35170f] placeholder-[#a0988e] ${errors.email ? 'border-red-400 focus:border-red-500' : 'border-[#e8dfc8] focus:border-[#DB9E30]'}`}
           />
-          {errors.email && <p className="text-xs text-red-500 mt-1">{errors.email.message}</p>}
+          {errors.email && <p id="contact-email-error" className="text-xs text-red-500 mt-1">{errors.email.message}</p>}
         </div>
 
         {/* Message Input */}
@@ -110,9 +114,11 @@ export default function ContactForm() {
             rows={6}
             placeholder="Your message*"
             {...register('message')}
-            className="w-full px-5 py-4 bg-[#fcfbfa] border border-[#e8dfc8] rounded-sm focus:outline-none focus:border-[#DB9E30] text-base transition-colors text-[#35170f] placeholder-[#a0988e] resize-none"
+            aria-invalid={!!errors.message}
+            aria-describedby={errors.message ? 'contact-message-error' : undefined}
+            className={`w-full px-5 py-4 bg-[#fcfbfa] border rounded-sm focus:outline-none text-base transition-colors text-[#35170f] placeholder-[#a0988e] resize-none ${errors.message ? 'border-red-400 focus:border-red-500' : 'border-[#e8dfc8] focus:border-[#DB9E30]'}`}
           />
-          {errors.message && <p className="text-xs text-red-500 mt-1">{errors.message.message}</p>}
+          {errors.message && <p id="contact-message-error" className="text-xs text-red-500 mt-1">{errors.message.message}</p>}
         </div>
 
         {/* Consent Checkbox */}

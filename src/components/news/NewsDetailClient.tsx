@@ -31,6 +31,8 @@ export default function NewsDetailClient({ post }: NewsDetailClientProps) {
   const [saveInfo, setSaveInfo] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [comments, setComments] = useState<Array<{ name: string; date: string; text: string }>>([])
+  const [nameError, setNameError] = useState('')
+  const [emailError, setEmailError] = useState('')
 
   const formattedDate = post.createdAt
     ? new Date(post.createdAt).toLocaleDateString('en-US', {
@@ -40,15 +42,32 @@ export default function NewsDetailClient({ post }: NewsDetailClientProps) {
       })
     : 'May 21, 2022'
 
+  const validateName = (value: string): string => {
+    if (!value.trim()) return 'Name is required.'
+    if (!isHumanName(value)) return 'Please enter a valid name.'
+    return ''
+  }
+
+  const validateEmail = (value: string): string => {
+    if (!value.trim()) return 'Email is required.'
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim())) return 'Please enter a valid email address.'
+    return ''
+  }
+
   const handleCommentSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!commentName.trim() || !commentEmail.trim() || !commentText.trim()) {
-      toast.error('Please fill in all required fields.')
+
+    const nameErr = validateName(commentName)
+    const emailErr = validateEmail(commentEmail)
+    setNameError(nameErr)
+    setEmailError(emailErr)
+
+    if (nameErr || emailErr) {
       return
     }
 
-    if (!isHumanName(commentName)) {
-      toast.error('Please enter a valid name.')
+    if (!commentText.trim()) {
+      toast.error('Please fill in all required fields.')
       return
     }
 
@@ -81,6 +100,8 @@ export default function NewsDetailClient({ post }: NewsDetailClientProps) {
       setCommentEmail('')
       setCommentText('')
       setSaveInfo(false)
+      setNameError('')
+      setEmailError('')
     } catch (err: any) {
       toast.error(err.message || 'Error submitting comment.')
     } finally {
@@ -228,9 +249,13 @@ export default function NewsDetailClient({ post }: NewsDetailClientProps) {
                     required
                     placeholder="Jane Doe"
                     value={commentName}
-                    onChange={(e) => setCommentName(e.target.value)}
-                    className="w-full px-4 py-3 rounded bg-[#efeee7] text-sm text-[#35170f] outline-none border border-[#e7e0d5] focus:border-[#DB9E30] transition-colors"
+                    onChange={(e) => { setCommentName(e.target.value); if (nameError) setNameError(validateName(e.target.value)); }}
+                    onBlur={() => setNameError(validateName(commentName))}
+                    aria-invalid={!!nameError}
+                    aria-describedby={nameError ? 'comment-name-error' : undefined}
+                    className={`w-full px-4 py-3 rounded bg-[#efeee7] text-sm text-[#35170f] outline-none border transition-colors ${nameError ? 'border-red-400 focus:border-red-500' : 'border-[#e7e0d5] focus:border-[#DB9E30]'}`}
                   />
+                  {nameError && <p id="comment-name-error" className="text-xs text-red-500 mt-1">{nameError}</p>}
                 </div>
 
                 <div>
@@ -243,9 +268,13 @@ export default function NewsDetailClient({ post }: NewsDetailClientProps) {
                     required
                     placeholder="jane@example.com"
                     value={commentEmail}
-                    onChange={(e) => setCommentEmail(e.target.value)}
-                    className="w-full px-4 py-3 rounded bg-[#efeee7] text-sm text-[#35170f] outline-none border border-[#e7e0d5] focus:border-[#DB9E30] transition-colors"
+                    onChange={(e) => { setCommentEmail(e.target.value); if (emailError) setEmailError(validateEmail(e.target.value)); }}
+                    onBlur={() => setEmailError(validateEmail(commentEmail))}
+                    aria-invalid={!!emailError}
+                    aria-describedby={emailError ? 'comment-email-error' : undefined}
+                    className={`w-full px-4 py-3 rounded bg-[#efeee7] text-sm text-[#35170f] outline-none border transition-colors ${emailError ? 'border-red-400 focus:border-red-500' : 'border-[#e7e0d5] focus:border-[#DB9E30]'}`}
                   />
+                  {emailError && <p id="comment-email-error" className="text-xs text-red-500 mt-1">{emailError}</p>}
                 </div>
               </div>
 

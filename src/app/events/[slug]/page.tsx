@@ -101,8 +101,7 @@ export default async function EventDetailPage({ params }: EventDetailPageProps) 
               <li>Jolof rice competition – let the judges decide the winner</li>
               <li>Dance and Fashion show – try out our fashion</li>
               <li>Art exhibition and sales</li>
-              <li>Children’s bouncy castle</li>
-              <li>And more</li>
+              <li>Children's bouncy castle and more</li>
             </ul>
           </div>
         )}
