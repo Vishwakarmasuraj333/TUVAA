@@ -148,7 +148,7 @@ export default function DonationForm({ campaigns }: DonationFormProps) {
           {/* Amount Selector */}
           <div>
             <label className="block text-xs font-cinzel text-gold-400 uppercase tracking-widest mb-3">
-              Donation Amount *
+              Donation Amount <span className="text-red-400 font-bold ml-0.5">*</span>
             </label>
             <div className="grid grid-cols-4 gap-2.5 mb-4">
               {suggestedAmounts.map((amt) => (
@@ -189,30 +189,34 @@ export default function DonationForm({ campaigns }: DonationFormProps) {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div>
               <label htmlFor="donorName" className="block text-xs font-cinzel text-gold-400 uppercase tracking-widest mb-2">
-                Your Name *
+                Your Name <span className="text-red-400 font-bold ml-0.5">*</span>
               </label>
               <input
                 type="text"
                 id="donorName"
                 placeholder="Jane Doe"
                 {...register('donorName')}
+                aria-invalid={!!errors.donorName}
+                aria-describedby={errors.donorName ? 'donation-name-error' : undefined}
                 className="w-full px-4 py-3 bg-black/40 border border-gold-500/20 rounded focus:outline-none focus:border-gold-500 text-sm transition-colors text-white"
               />
-              {errors.donorName && <p className="text-xs text-sunset-500 mt-1">{errors.donorName.message}</p>}
+              {errors.donorName && <p id="donation-name-error" className="text-xs text-sunset-500 mt-1">{errors.donorName.message}</p>}
             </div>
 
             <div>
               <label htmlFor="donorEmail" className="block text-xs font-cinzel text-gold-400 uppercase tracking-widest mb-2">
-                Email Address *
+                Email Address <span className="text-red-400 font-bold ml-0.5">*</span>
               </label>
               <input
                 type="email"
                 id="donorEmail"
                 placeholder="jane@example.com"
                 {...register('donorEmail')}
+                aria-invalid={!!errors.donorEmail}
+                aria-describedby={errors.donorEmail ? 'donation-email-error' : undefined}
                 className="w-full px-4 py-3 bg-black/40 border border-gold-500/20 rounded focus:outline-none focus:border-gold-500 text-sm transition-colors text-white"
               />
-              {errors.donorEmail && <p className="text-xs text-sunset-500 mt-1">{errors.donorEmail.message}</p>}
+              {errors.donorEmail && <p id="donation-email-error" className="text-xs text-sunset-500 mt-1">{errors.donorEmail.message}</p>}
             </div>
           </div>
 

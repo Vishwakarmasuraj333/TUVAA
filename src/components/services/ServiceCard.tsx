@@ -12,8 +12,7 @@ interface ServiceCardProps {
 }
 
 export default function ServiceCard({ service }: ServiceCardProps) {
-  const initialImg = service.image === '/images/street-cleaning.jpg' ? '/images/community-street-cleaning.jpg' : (service.image || '/images/event-placeholder.jpg')
-  const [imageSrc, setImageSrc] = useState(initialImg)
+  const [imageSrc, setImageSrc] = useState(service.image || '/images/health-wellbeing-info.jpg')
 
   const formattedDate = service.date
 

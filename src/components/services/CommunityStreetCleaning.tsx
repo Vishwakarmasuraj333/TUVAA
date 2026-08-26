@@ -13,8 +13,14 @@ export default function CommunityStreetCleaning() {
         }}
       />
 
-      {/* Dark Overlay (rgba(0,0,0,0.35)) */}
-      <div className="absolute inset-0 bg-black/35" />
+      {/* Dark Base Overlay and Gradient for rich readability */}
+      <div className="absolute inset-0 bg-black/50" />
+      <div
+        className="absolute inset-0"
+        style={{
+          background: 'linear-gradient(to bottom, rgba(13,9,5,0.65) 0%, rgba(13,9,5,0.35) 50%, rgba(13,9,5,0.75) 100%)',
+        }}
+      />
 
       {/* Content Container */}
       <div className="relative z-10 w-full max-w-[780px] mx-auto px-6 flex flex-col items-center justify-center text-white space-y-4">

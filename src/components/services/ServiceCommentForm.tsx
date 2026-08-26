@@ -6,18 +6,38 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
 import { toast } from 'sonner'
 import { motion } from 'framer-motion'
-import { humanNameSchema } from '@/lib/validations/rules'
+import { isHumanName } from '@/lib/validations/rules'
 
 const commentFormSchema = z.object({
-  name: humanNameSchema,
-  email: z.string().trim().email('Please enter a valid email address'),
-  comment: z.string().trim().min(3, 'Comment must be at least 3 characters'),
+  name: z
+    .string()
+    .trim()
+    .min(1, 'Your Name is required.')
+    .min(2, 'Your Name must be at least 2 characters.')
+    .max(100, 'Your Name cannot exceed 100 characters.')
+    .refine(isHumanName, {
+      message: 'Please enter a valid name (letters only).',
+    }),
+  email: z
+    .string()
+    .trim()
+    .min(1, 'Your E-mail is required.')
+    .email('Please enter a valid email address.'),
+  comment: z
+    .string()
+    .trim()
+    .min(1, 'Your Comment is required.')
+    .min(3, 'Your Comment must be at least 3 characters.'),
   acceptedPrivacy: z.boolean().refine((val) => val === true, {
     message: 'You must agree to the storage and handling of your data.',
   }),
-  mathAnswer: z.string().refine((val) => val.trim() === '4', {
-    message: 'Math answer must be 4',
-  }),
+  mathAnswer: z
+    .string()
+    .trim()
+    .min(1, 'Math answer is required.')
+    .refine((val) => val.trim() === '4', {
+      message: 'Math answer must be 4.',
+    }),
   saveInfo: z.boolean().optional(),
   honeypot: z.string().optional(),
 })
@@ -106,32 +126,44 @@ export default function ServiceCommentForm({ serviceSlug }: ServiceCommentFormPr
         {/* Name and Email side-by-side on desktop */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           <div>
+            <label htmlFor="service-comment-name" className="block text-xs font-semibold uppercase tracking-wider text-[#35170f] mb-1.5 font-cinzel">
+              Your Name <span className="text-red-500 font-bold ml-0.5">*</span>
+            </label>
             <input
+              id="service-comment-name"
               type="text"
               placeholder="Your Name *"
               {...register('name')}
+              aria-invalid={!!errors.name}
+              aria-describedby={errors.name ? 'service-name-error' : undefined}
               className={`w-full p-4 bg-[#fbfaf4] text-[#31170d] text-sm rounded-md outline-none transition-all border ${
-                errors.name ? 'border-red-400' : 'border-transparent focus:border-[#DB9E30]/40'
+                errors.name ? 'border-red-400 focus:border-red-500' : 'border-transparent focus:border-[#DB9E30]/40'
               }`}
             />
             {errors.name && (
-              <span className="text-xs text-red-500 mt-1 block">
+              <span id="service-name-error" className="text-xs text-red-500 mt-1 block">
                 {errors.name.message}
               </span>
             )}
           </div>
 
           <div>
+            <label htmlFor="service-comment-email" className="block text-xs font-semibold uppercase tracking-wider text-[#35170f] mb-1.5 font-cinzel">
+              Your E-mail <span className="text-red-500 font-bold ml-0.5">*</span>
+            </label>
             <input
+              id="service-comment-email"
               type="email"
               placeholder="Your E-mail *"
               {...register('email')}
+              aria-invalid={!!errors.email}
+              aria-describedby={errors.email ? 'service-email-error' : undefined}
               className={`w-full p-4 bg-[#fbfaf4] text-[#31170d] text-sm rounded-md outline-none transition-all border ${
-                errors.email ? 'border-red-400' : 'border-transparent focus:border-[#DB9E30]/40'
+                errors.email ? 'border-red-400 focus:border-red-500' : 'border-transparent focus:border-[#DB9E30]/40'
               }`}
             />
             {errors.email && (
-              <span className="text-xs text-red-500 mt-1 block">
+              <span id="service-email-error" className="text-xs text-red-500 mt-1 block">
                 {errors.email.message}
               </span>
             )}
@@ -154,23 +186,26 @@ export default function ServiceCommentForm({ serviceSlug }: ServiceCommentFormPr
         {/* Captcha Section */}
         <div className="space-y-3">
           <p className="text-[#8b8178] text-[13px] tracking-wide">
-            Please enter an answer in digits:
+            Please enter an answer in digits: <span className="text-red-500 font-bold ml-0.5">*</span>
           </p>
           <div className="flex items-center gap-3.5">
-            <span className="text-sm font-medium text-[#31170d] select-none font-cinzel">
+            <label htmlFor="mathAnswer" className="text-sm font-medium text-[#31170d] select-none font-cinzel">
               four × 1 =
-            </span>
+            </label>
             <input
+              id="mathAnswer"
               type="text"
               {...register('mathAnswer')}
               maxLength={4}
+              aria-invalid={!!errors.mathAnswer}
+              aria-describedby={errors.mathAnswer ? 'service-math-error' : undefined}
               className={`w-16 p-3 bg-[#fbfaf4] text-center text-[#31170d] text-sm font-bold rounded-md outline-none transition-all border ${
-                errors.mathAnswer ? 'border-red-400' : 'border-transparent focus:border-[#DB9E30]/40'
+                errors.mathAnswer ? 'border-red-400 focus:border-red-500' : 'border-transparent focus:border-[#DB9E30]/40'
               }`}
             />
           </div>
           {errors.mathAnswer && (
-            <span className="text-xs text-red-500 mt-1 block">
+            <span id="service-math-error" className="text-xs text-red-500 mt-1 block">
               {errors.mathAnswer.message}
             </span>
           )}
@@ -178,17 +213,23 @@ export default function ServiceCommentForm({ serviceSlug }: ServiceCommentFormPr
 
         {/* Comment Textarea */}
         <div>
+          <label htmlFor="service-comment-text" className="block text-xs font-semibold uppercase tracking-wider text-[#35170f] mb-1.5 font-cinzel">
+            Your Comment <span className="text-red-500 font-bold ml-0.5">*</span>
+          </label>
           <textarea
+            id="service-comment-text"
             placeholder="Your comment *"
             rows={8}
             {...register('comment')}
             style={{ height: '190px' }}
+            aria-invalid={!!errors.comment}
+            aria-describedby={errors.comment ? 'service-comment-error' : undefined}
             className={`w-full p-4 bg-[#fbfaf4] text-[#31170d] text-sm rounded-md outline-none transition-all resize-none border ${
-              errors.comment ? 'border-red-400' : 'border-transparent focus:border-[#DB9E30]/40'
+              errors.comment ? 'border-red-400 focus:border-red-500' : 'border-transparent focus:border-[#DB9E30]/40'
             }`}
           />
           {errors.comment && (
-            <span className="text-xs text-red-500 mt-1 block">
+            <span id="service-comment-error" className="text-xs text-red-500 mt-1 block">
               {errors.comment.message}
             </span>
           )}
@@ -201,14 +242,16 @@ export default function ServiceCommentForm({ serviceSlug }: ServiceCommentFormPr
               type="checkbox"
               id="acceptedPrivacy"
               {...register('acceptedPrivacy')}
+              aria-invalid={!!errors.acceptedPrivacy}
+              aria-describedby={errors.acceptedPrivacy ? 'service-privacy-error' : undefined}
               className="mt-1 cursor-pointer accent-[#DB9E30] rounded border-zinc-300"
             />
             <label htmlFor="acceptedPrivacy" className="cursor-pointer select-none">
-              By using this form you agree with the storage and handling of your data by this website. *
+              By using this form you agree with the storage and handling of your data by this website. <span className="text-red-500 font-bold ml-0.5">*</span>
             </label>
           </div>
           {errors.acceptedPrivacy && (
-            <span className="text-xs text-red-500 block">
+            <span id="service-privacy-error" className="text-xs text-red-500 block">
               {errors.acceptedPrivacy.message}
             </span>
           )}

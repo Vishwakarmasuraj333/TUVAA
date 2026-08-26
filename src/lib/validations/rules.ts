@@ -88,17 +88,19 @@ export function isCountryName(val: string): boolean {
 export const humanNameSchema = z
   .string()
   .trim()
-  .min(2, 'Please enter a valid name.')
+  .min(1, 'Name is required.')
+  .min(2, 'Name must be at least 2 characters.')
   .max(100, 'Name is too long.')
   .refine(isHumanName, {
-    message: 'Please enter a valid name.',
+    message: 'Please enter a valid name (letters only).',
   })
 
 export const requiredPhoneNumberSchema = z
   .string()
   .trim()
-  .min(7, 'Please enter a valid phone number.')
-  .max(20, 'Phone number is too long.')
+  .min(1, 'Phone Number is required.')
+  .min(7, 'Phone Number must be at least 7 digits.')
+  .max(20, 'Phone Number cannot exceed 20 characters.')
   .refine(isPhoneNumber, {
     message: 'Please enter a valid phone number.',
   })
@@ -115,8 +117,9 @@ export const optionalPhoneNumberSchema = z
 export const membershipContactNumberSchema = z
   .string()
   .trim()
-  .min(7, 'Please enter a valid contact number.')
-  .max(20, 'Contact number cannot exceed 20 characters.')
+  .min(1, 'Contact Number is required.')
+  .min(7, 'Contact Number must be at least 7 digits.')
+  .max(20, 'Contact Number cannot exceed 20 characters.')
   .refine(isPhoneNumber, {
     message: 'Please enter a valid contact number.',
   })
@@ -124,16 +127,18 @@ export const membershipContactNumberSchema = z
 export const organizationNameSchema = z
   .string()
   .trim()
-  .min(2, 'Community group/Association name must be at least 2 characters.')
-  .max(150, 'Community group/Association name is too long.')
+  .min(1, 'Association / Group Name is required.')
+  .min(2, 'Association / Group Name must be at least 2 characters.')
+  .max(150, 'Association / Group Name is too long.')
   .refine(isOrganizationName, {
-    message: 'Please enter a valid organization/group name.',
+    message: 'Please enter a valid association/group name.',
   })
 
 export const cityNameSchema = z
   .string()
   .trim()
-  .min(2, 'City is required.')
+  .min(1, 'City is required.')
+  .min(2, 'City must be at least 2 characters.')
   .max(100, 'City name is too long.')
   .refine(isCityName, {
     message: 'Please enter a valid city name.',
@@ -142,7 +147,8 @@ export const cityNameSchema = z
 export const countryNameSchema = z
   .string()
   .trim()
-  .min(2, 'Country is required.')
+  .min(1, 'Country is required.')
+  .min(2, 'Country must be at least 2 characters.')
   .max(100, 'Country name is too long.')
   .refine(isCountryName, {
     message: 'Please enter a valid country name.',

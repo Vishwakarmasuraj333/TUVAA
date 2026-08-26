@@ -55,31 +55,35 @@ export default function AfricanGroupForm() {
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
         <div>
           <label htmlFor="fullName" className="block text-xs font-cinzel text-gold-400 uppercase tracking-widest mb-2">
-            Contact Full Name *
+            Contact Full Name <span className="text-red-400 font-bold ml-0.5">*</span>
           </label>
           <input
             type="text"
             id="fullName"
             placeholder="John Doe"
             {...register('fullName')}
+            aria-invalid={!!errors.fullName}
+            aria-describedby={errors.fullName ? 'african-name-error' : undefined}
             className="w-full px-4 py-3 bg-white border border-gold-500/20 rounded focus:outline-none focus:border-gold-500 text-sm transition-colors text-charcoal"
           />
-          {errors.fullName && <p className="text-xs text-sunset-500 mt-1">{errors.fullName.message}</p>}
+          {errors.fullName && <p id="african-name-error" className="text-xs text-sunset-500 mt-1">{errors.fullName.message}</p>}
         </div>
 
         <div>
           <label htmlFor="emailAddress" className="block text-xs font-cinzel text-gold-400 uppercase tracking-widest mb-2">
-            Email Address *
+            Email Address <span className="text-red-400 font-bold ml-0.5">*</span>
           </label>
           <input
             type="email"
             id="emailAddress"
             placeholder="john@example.com"
             {...register('emailAddress')}
+            aria-invalid={!!errors.emailAddress}
+            aria-describedby={errors.emailAddress ? 'african-email-error' : undefined}
             className="w-full px-4 py-3 bg-white border border-gold-500/20 rounded focus:outline-none focus:border-gold-500 text-sm transition-colors text-charcoal"
           />
           {errors.emailAddress && (
-            <p className="text-xs text-sunset-500 mt-1">{errors.emailAddress.message}</p>
+            <p id="african-email-error" className="text-xs text-sunset-500 mt-1">{errors.emailAddress.message}</p>
           )}
         </div>
       </div>
@@ -87,7 +91,7 @@ export default function AfricanGroupForm() {
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
         <div>
           <label htmlFor="contactNumber" className="block text-xs font-cinzel text-gold-400 uppercase tracking-widest mb-2">
-            Contact Phone Number *
+            Contact Phone Number <span className="text-red-400 font-bold ml-0.5">*</span>
           </label>
           <input
             type="tel"
@@ -96,43 +100,49 @@ export default function AfricanGroupForm() {
             id="contactNumber"
             placeholder="07123456789"
             {...register('contactNumber')}
+            aria-invalid={!!errors.contactNumber}
+            aria-describedby={errors.contactNumber ? 'african-phone-error' : undefined}
             className="w-full px-4 py-3 bg-white border border-gold-500/20 rounded focus:outline-none focus:border-gold-500 text-sm transition-colors text-charcoal"
           />
           {errors.contactNumber && (
-            <p className="text-xs text-sunset-500 mt-1">{errors.contactNumber.message}</p>
+            <p id="african-phone-error" className="text-xs text-sunset-500 mt-1">{errors.contactNumber.message}</p>
           )}
         </div>
 
         <div>
           <label htmlFor="communityGroupName" className="block text-xs font-cinzel text-gold-400 uppercase tracking-widest mb-2">
-            African Community Group Name *
+            African Community Group Name <span className="text-red-400 font-bold ml-0.5">*</span>
           </label>
           <input
             type="text"
             id="communityGroupName"
             placeholder="e.g. Southampton Gambian Community"
             {...register('communityGroupName')}
+            aria-invalid={!!errors.communityGroupName}
+            aria-describedby={errors.communityGroupName ? 'african-group-error' : undefined}
             className="w-full px-4 py-3 bg-white border border-gold-500/20 rounded focus:outline-none focus:border-gold-500 text-sm transition-colors text-charcoal"
           />
           {errors.communityGroupName && (
-            <p className="text-xs text-sunset-500 mt-1">{errors.communityGroupName.message}</p>
+            <p id="african-group-error" className="text-xs text-sunset-500 mt-1">{errors.communityGroupName.message}</p>
           )}
         </div>
       </div>
 
       <div>
         <label htmlFor="communityGroupAddress" className="block text-xs font-cinzel text-gold-400 uppercase tracking-widest mb-2">
-          Community Group Address *
+          Community Group Address <span className="text-red-400 font-bold ml-0.5">*</span>
         </label>
         <input
           type="text"
           id="communityGroupAddress"
           placeholder="Newtown Youth Centre, Graham Rd, Southampton, SO14 0AW"
           {...register('communityGroupAddress')}
+          aria-invalid={!!errors.communityGroupAddress}
+          aria-describedby={errors.communityGroupAddress ? 'african-address-error' : undefined}
           className="w-full px-4 py-3 bg-white border border-gold-500/20 rounded focus:outline-none focus:border-gold-500 text-sm transition-colors text-charcoal"
         />
         {errors.communityGroupAddress && (
-          <p className="text-xs text-sunset-500 mt-1">{errors.communityGroupAddress.message}</p>
+          <p id="african-address-error" className="text-xs text-sunset-500 mt-1">{errors.communityGroupAddress.message}</p>
         )}
       </div>
 

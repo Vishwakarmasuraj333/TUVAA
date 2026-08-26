@@ -5,19 +5,29 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { toast } from 'sonner'
-import { motion } from 'framer-motion'
-import { humanNameSchema } from '@/lib/validations'
-import { isPhoneNumber } from '@/lib/validations/rules'
+import { isHumanName, isPhoneNumber } from '@/lib/validations/rules'
 
 const registerSchema = z.object({
-  fullName: humanNameSchema,
-  email: z.string().trim().email('Please enter a valid email address'),
+  fullName: z
+    .string()
+    .trim()
+    .min(1, 'Full Name is required.')
+    .min(2, 'Full Name must be at least 2 characters.')
+    .max(100, 'Full Name cannot exceed 100 characters.')
+    .refine(isHumanName, {
+      message: 'Please enter a valid Full Name (letters only).',
+    }),
+  email: z
+    .string()
+    .trim()
+    .min(1, 'Email Address is required.')
+    .email('Please enter a valid Email Address.'),
   phone: z
     .string()
     .trim()
     .optional()
     .refine((val) => !val || isPhoneNumber(val), {
-      message: 'Please enter a valid phone number.',
+      message: 'Please enter a valid Phone Number.',
     }),
   message: z.string().optional(),
   acceptedTerms: z.literal(true, {
@@ -110,66 +120,76 @@ export default function EventRegisterForm({ eventSlug, eventName }: EventRegiste
 
         {/* Full Name */}
         <div className="space-y-1.5">
-          <label className="text-xs font-semibold text-zinc-700 uppercase tracking-wider block">
-            Full Name *
+          <label htmlFor="event-fullName" className="text-xs font-semibold text-zinc-700 uppercase tracking-wider block font-cinzel">
+            Full Name <span className="text-red-500 font-bold ml-0.5">*</span>
           </label>
           <input
+            id="event-fullName"
             type="text"
             {...register('fullName')}
+            aria-invalid={!!errors.fullName}
+            aria-describedby={errors.fullName ? 'event-fullName-error' : undefined}
             className={`w-full bg-white border ${
               errors.fullName ? 'border-red-500 focus:ring-red-500' : 'border-zinc-300 focus:ring-[#DB9E30]'
             } rounded-sm px-4 py-2.5 text-sm text-zinc-800 focus:outline-none focus:ring-1 focus:border-[#DB9E30] transition-shadow`}
             placeholder="John Doe"
           />
           {errors.fullName && (
-            <p className="text-xs text-red-500 font-medium">{errors.fullName.message}</p>
+            <p id="event-fullName-error" className="text-xs text-red-500 font-medium">{errors.fullName.message}</p>
           )}
         </div>
 
         {/* Email */}
         <div className="space-y-1.5">
-          <label className="text-xs font-semibold text-zinc-700 uppercase tracking-wider block">
-            Email Address *
+          <label htmlFor="event-email" className="text-xs font-semibold text-zinc-700 uppercase tracking-wider block font-cinzel">
+            Email Address <span className="text-red-500 font-bold ml-0.5">*</span>
           </label>
           <input
+            id="event-email"
             type="email"
             {...register('email')}
+            aria-invalid={!!errors.email}
+            aria-describedby={errors.email ? 'event-email-error' : undefined}
             className={`w-full bg-white border ${
               errors.email ? 'border-red-500 focus:ring-red-500' : 'border-zinc-300 focus:ring-[#DB9E30]'
             } rounded-sm px-4 py-2.5 text-sm text-zinc-800 focus:outline-none focus:ring-1 focus:border-[#DB9E30] transition-shadow`}
             placeholder="john@example.com"
           />
           {errors.email && (
-            <p className="text-xs text-red-500 font-medium">{errors.email.message}</p>
+            <p id="event-email-error" className="text-xs text-red-500 font-medium">{errors.email.message}</p>
           )}
         </div>
 
         {/* Phone */}
         <div className="space-y-1.5">
-          <label className="text-xs font-semibold text-zinc-700 uppercase tracking-wider block">
+          <label htmlFor="event-phone" className="text-xs font-semibold text-zinc-700 uppercase tracking-wider block font-cinzel">
             Phone Number (Optional)
           </label>
           <input
+            id="event-phone"
             type="tel"
             inputMode="tel"
             maxLength={20}
             {...register('phone')}
+            aria-invalid={!!errors.phone}
+            aria-describedby={errors.phone ? 'event-phone-error' : undefined}
             className={`w-full bg-white border ${
               errors.phone ? 'border-red-500 focus:ring-red-500' : 'border-zinc-300 focus:ring-[#DB9E30]'
             } rounded-sm px-4 py-2.5 text-sm text-zinc-800 focus:outline-none focus:ring-1 focus:border-[#DB9E30] transition-shadow`}
             placeholder="+44 7843 106868"
           />
           {errors.phone && (
-            <p className="text-xs text-red-500 font-medium">{errors.phone.message}</p>
+            <p id="event-phone-error" className="text-xs text-red-500 font-medium">{errors.phone.message}</p>
           )}
         </div>
 
         {/* Message */}
         <div className="space-y-1.5">
-          <label className="text-xs font-semibold text-zinc-700 uppercase tracking-wider block">
+          <label htmlFor="event-message" className="text-xs font-semibold text-zinc-700 uppercase tracking-wider block font-cinzel">
             Message / Roles Preferred (Optional)
           </label>
           <textarea
+            id="event-message"
             {...register('message')}
             rows={4}
             className="w-full bg-white border border-zinc-300 focus:ring-[#DB9E30] rounded-sm px-4 py-2.5 text-sm text-zinc-800 focus:outline-none focus:ring-1 focus:border-[#DB9E30] transition-shadow resize-none"
@@ -183,14 +203,16 @@ export default function EventRegisterForm({ eventSlug, eventName }: EventRegiste
             <input
               type="checkbox"
               {...register('acceptedTerms')}
+              aria-invalid={!!errors.acceptedTerms}
+              aria-describedby={errors.acceptedTerms ? 'event-terms-error' : undefined}
               className="mt-1 h-4 w-4 border-zinc-300 text-[#DB9E30] focus:ring-[#DB9E30] rounded"
             />
             <span className="text-xs sm:text-sm text-[#555] leading-snug select-none">
-              I agree to register for {eventName} and accept TUVAA policies.
+              I agree to register for {eventName} and accept TUVAA policies. <span className="text-red-500 font-bold ml-0.5">*</span>
             </span>
           </label>
           {errors.acceptedTerms && (
-            <p className="text-xs text-red-500 font-medium">{errors.acceptedTerms.message}</p>
+            <p id="event-terms-error" className="text-xs text-red-500 font-medium">{errors.acceptedTerms.message}</p>
           )}
         </div>
 
