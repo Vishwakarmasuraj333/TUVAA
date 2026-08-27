@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
 import PageBanner from '@/components/common/PageBanner'
 import BlogSidebar from '@/components/common/BlogSidebar'
 import { getDirectoryListings } from '@/lib/directory'
@@ -32,21 +33,13 @@ export default async function CommunityGroupsPage() {
                 </div>
                 <h2 className="font-cinzel text-xl md:text-[20px] font-bold uppercase mb-4 text-[#35170f]">{group.title}</h2>
                 <p className="text-xs leading-6 text-[#8b8178] line-clamp-4 mb-2">{group.description}</p>
-                <a
-                  href={
-                    group.email
-                      ? `mailto:${group.email}`
-                      : group.website
-                      ? group.website
-                      : 'mailto:info@tuvaa.org.uk'
-                  }
-                  target={group.website && !group.email ? '_blank' : undefined}
-                  rel={group.website && !group.email ? 'noopener noreferrer' : undefined}
-                  className="mt-5 inline-flex items-center justify-center px-4 py-2 border border-[#DB9E30] rounded-sm text-[11px] font-bold font-cinzel text-[#DB9E30] hover:bg-[#DB9E30] hover:text-white transition-colors duration-200 tracking-wider uppercase focus:outline-none focus:ring-2 focus:ring-[#DB9E30]"
+                <Link
+                  href={`/contact?group=${encodeURIComponent(group.title)}`}
+                  className="mt-5 inline-flex items-center justify-center px-4 py-2 border border-[#DB9E30] rounded-sm text-[11px] font-bold font-cinzel text-[#DB9E30] hover:bg-[#DB9E30] hover:text-white transition-colors duration-200 tracking-wider uppercase focus:outline-none focus:ring-2 focus:ring-[#DB9E30] cursor-pointer"
                   aria-label={`Contact ${group.title}`}
                 >
                   Contact Group
-                </a>
+                </Link>
               </div>
             ))}
           </div>

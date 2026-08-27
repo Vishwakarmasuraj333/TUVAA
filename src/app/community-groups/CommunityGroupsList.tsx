@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 import Card from '@/components/common/Card'
 import { Search, MapPin, Mail } from 'lucide-react'
 
@@ -79,23 +80,13 @@ export default function CommunityGroupsList({ initialGroups }: CommunityGroupsLi
                       Contact: {group.contact}
                     </a>
                   )}
-                  <a
-                    href={
-                      group.contact
-                        ? group.contact.includes('@')
-                          ? `mailto:${group.contact}`
-                          : group.contact.startsWith('http')
-                          ? group.contact
-                          : 'mailto:info@tuvaa.org.uk'
-                        : 'mailto:info@tuvaa.org.uk'
-                    }
-                    target={group.contact?.startsWith('http') ? '_blank' : undefined}
-                    rel={group.contact?.startsWith('http') ? 'noopener noreferrer' : undefined}
+                  <Link
+                    href={`/contact?group=${encodeURIComponent(group.name)}`}
                     className="block text-center bg-gold-600 hover:bg-gold-500 text-[#0d0905] font-cinzel font-bold text-[10px] uppercase tracking-widest py-2.5 rounded transition-all active:scale-95 cursor-pointer focus:outline-none focus:ring-2 focus:ring-gold-500"
                     aria-label={`Contact ${group.name}`}
                   >
                     Contact Group
-                  </a>
+                  </Link>
                 </div>
               </div>
             </Card>

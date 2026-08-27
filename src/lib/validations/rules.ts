@@ -9,11 +9,8 @@ export function isHumanName(val: string): boolean {
   if (!val) return false
   const trimmed = val.trim()
   if (trimmed.length < 2 || trimmed.length > 100) return false
-  // Must contain at least 2 Unicode letters
-  const lettersMatch = trimmed.match(/[\p{L}\p{M}]/gu)
-  if (!lettersMatch || lettersMatch.length < 2) return false
-  // Must only contain letters, spaces, hyphens, apostrophes, and periods
-  return /^[\p{L}\p{M}\s.'’-]+$/u.test(trimmed)
+  // Must contain only letters (including Unicode letters) with optional spaces, hyphens, apostrophes, and dots between words
+  return /^[\p{L}\p{M}]+(?:[\s'’.-]+[\p{L}\p{M}]+)*\.?$/u.test(trimmed)
 }
 
 /**
@@ -92,7 +89,7 @@ export const humanNameSchema = z
   .min(2, 'Name must be at least 2 characters.')
   .max(100, 'Name is too long.')
   .refine(isHumanName, {
-    message: 'Please enter a valid name (letters only).',
+    message: 'Please enter a valid name using letters only.',
   })
 
 export const requiredPhoneNumberSchema = z

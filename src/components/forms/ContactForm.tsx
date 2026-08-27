@@ -1,13 +1,18 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useSearchParams } from 'next/navigation'
+import Link from 'next/link'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { ContactSchema, type ContactInput } from '@/lib/validations'
 import { toast } from 'sonner'
-import { Loader2 } from 'lucide-react'
+import { Loader2, Users } from 'lucide-react'
 
 export default function ContactForm() {
+  const searchParams = useSearchParams()
+  const groupParam = searchParams.get('group')
+
   const [loading, setLoading] = useState(false)
   const [consent, setConsent] = useState(true)
 
@@ -15,18 +20,26 @@ export default function ContactForm() {
     register,
     handleSubmit,
     reset,
+    setValue,
     formState: { errors },
   } = useForm<ContactInput>({
     resolver: zodResolver(ContactSchema),
+    mode: 'onTouched',
     defaultValues: {
       name: '',
       email: '',
       phone: '',
-      subject: 'TUVAA Website Contact Inquiry',
+      subject: groupParam ? `Inquiry regarding Community Group: ${groupParam}` : 'TUVAA Website Contact Inquiry',
       message: '',
       honeypot: '',
     },
   })
+
+  useEffect(() => {
+    if (groupParam) {
+      setValue('subject', `Inquiry regarding Community Group: ${groupParam}`)
+    }
+  }, [groupParam, setValue])
 
   const onSubmit = async (data: ContactInput) => {
     if (!consent) {
@@ -82,6 +95,29 @@ export default function ContactForm() {
       />
 
       <div className="space-y-5">
+        {/* Selected Community Group Callout */}
+        {groupParam && (
+          <div className="p-4 bg-[#fdf8ee] border border-[#e8dfc8] rounded-sm text-sm text-[#35170f] flex items-center justify-between shadow-xs">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-full bg-[#DB9E30]/15 flex items-center justify-center text-[#DB9E30] shrink-0">
+                <Users className="h-4.5 w-4.5" />
+              </div>
+              <div>
+                <p className="text-[11px] uppercase tracking-wider font-bold text-[#DB9E30] font-cinzel">
+                  Community Group
+                </p>
+                <p className="font-bold text-sm text-[#35170f] font-cinzel">{groupParam}</p>
+              </div>
+            </div>
+            <Link
+              href="/contact"
+              className="text-xs text-[#8b8178] hover:text-[#35170f] underline ml-2 shrink-0 font-medium transition-colors"
+            >
+              Clear
+            </Link>
+          </div>
+        )}
+
         {/* Name Input */}
         <div>
           <input

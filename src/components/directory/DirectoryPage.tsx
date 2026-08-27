@@ -33,10 +33,10 @@ export default function DirectoryPage({ type, listings }: { type: DirectoryType;
                     <h2 className="font-cinzel text-xl font-bold leading-tight">{listing.title}</h2>
                     <p className="mt-3 text-sm leading-7 text-[#8b8178]">{listing.description}</p>
                     <div className="mt-5 flex flex-wrap gap-2.5 border-t border-[#eee7dc] pt-4 text-xs text-[#6f625a]">
-                      {(listing.email || listing.type === 'musician') && (
+                      {(listing.email || listing.type === 'musician' || type === 'musician') && (
                         <a
-                          href={`mailto:${listing.email || 'info@tuvaa.org.uk'}`}
-                          className="inline-flex items-center gap-1.5 px-3 py-1.5 border border-[#dcd4c8] rounded hover:border-[#DB9E30] hover:text-[#57a68f] transition-colors focus:outline-none focus:ring-1 focus:ring-[#DB9E30] bg-white font-medium"
+                          href={`mailto:${(listing.email || 'info@tuvaa.org.uk').trim()}`}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 border border-[#dcd4c8] rounded hover:border-[#DB9E30] hover:text-[#57a68f] transition-colors focus:outline-none focus:ring-1 focus:ring-[#DB9E30] bg-white font-medium cursor-pointer"
                           aria-label={`Email ${listing.title}`}
                         >
                           <Mail className="h-3.5 w-3.5" /> Email
@@ -44,8 +44,8 @@ export default function DirectoryPage({ type, listings }: { type: DirectoryType;
                       )}
                       {listing.phone && (
                         <a
-                          href={`tel:${listing.phone}`}
-                          className="inline-flex items-center gap-1.5 px-3 py-1.5 border border-[#dcd4c8] rounded hover:border-[#DB9E30] hover:text-[#57a68f] transition-colors focus:outline-none focus:ring-1 focus:ring-[#DB9E30] bg-white font-medium"
+                          href={`tel:${listing.phone.trim()}`}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 border border-[#dcd4c8] rounded hover:border-[#DB9E30] hover:text-[#57a68f] transition-colors focus:outline-none focus:ring-1 focus:ring-[#DB9E30] bg-white font-medium cursor-pointer"
                           aria-label={`Call ${listing.title}`}
                         >
                           <Phone className="h-3.5 w-3.5" /> Call
@@ -53,10 +53,10 @@ export default function DirectoryPage({ type, listings }: { type: DirectoryType;
                       )}
                       {listing.website && (
                         <a
-                          href={listing.website}
+                          href={listing.website.trim()}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1.5 px-3 py-1.5 border border-[#dcd4c8] rounded hover:border-[#DB9E30] hover:text-[#57a68f] transition-colors focus:outline-none focus:ring-1 focus:ring-[#DB9E30] bg-white font-medium"
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 border border-[#dcd4c8] rounded hover:border-[#DB9E30] hover:text-[#57a68f] transition-colors focus:outline-none focus:ring-1 focus:ring-[#DB9E30] bg-white font-medium cursor-pointer"
                           aria-label={`Visit website of ${listing.title}`}
                         >
                           <ExternalLink className="h-3.5 w-3.5" /> Website

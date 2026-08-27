@@ -1,3 +1,4 @@
+import { Suspense } from 'react'
 import PageBanner from '@/components/common/PageBanner'
 import ContactForm from '@/components/forms/ContactForm'
 
@@ -75,7 +76,9 @@ export default function ContactPage() {
               </p>
               
               <div className="pt-2">
-                <ContactForm />
+                <Suspense fallback={<div className="h-64 animate-pulse bg-gray-50 rounded" />}>
+                  <ContactForm />
+                </Suspense>
               </div>
             </div>
           </div>
