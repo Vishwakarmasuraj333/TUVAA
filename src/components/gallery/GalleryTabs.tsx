@@ -176,12 +176,6 @@ export default function GalleryTabs({ initialItems }: GalleryTabsProps) {
               <ChevronRight className="h-4 w-4 text-[#DB9E30]" />
             </motion.button>
           </div>
-
-          {/* Current Page Summary indicator */}
-          <div className="text-xs sm:text-sm font-cinzel font-semibold tracking-wider text-[#35170f]">
-            Page <span className="font-extrabold text-[#DB9E30]">{currentPage}</span> of{' '}
-            <span className="font-extrabold text-[#DB9E30]">{totalPages}</span> ({tabItems.length} items total)
-          </div>
         </div>
       )}
 
