@@ -29,7 +29,6 @@ export default function BbamPage() {
       <PageBanner
         title="BBAM"
         breadcrumb="BBAM"
-        backgroundImage="/images/bbam-festival-2025.jpg"
       />
 
       <div className="container mx-auto px-6 py-16 md:py-24 max-w-[1100px] text-left">
