@@ -107,10 +107,6 @@ export default function GalleryLightbox({
               )}
             </div>
 
-            {/* Bottom Details Footer */}
-            <div className="mt-3.5 text-center text-white/80 font-roboto text-xs tracking-wider">
-              Item {activeIndex + 1} of {items.length}
-            </div>
           </motion.div>
         </div>
       )}

@@ -14,7 +14,11 @@ export default function DirectoryPage({ type, listings }: { type: DirectoryType;
 
   return (
     <div className="w-full bg-white text-[#35170f]">
-      <PageBanner title={content.title} breadcrumb={content.title} />
+      <PageBanner
+        title={content.title}
+        breadcrumb={content.title}
+        backgroundImage={content.bannerImage || '/images/inner-page-bg.png'}
+      />
       <div className="mx-auto grid w-full max-w-[1480px] gap-12 px-5 py-16 sm:px-8 lg:grid-cols-[minmax(0,1fr)_350px] lg:items-start lg:px-10 lg:py-24">
         <main>
           <p className="mb-12 max-w-5xl text-base leading-8 text-[#8b8178] sm:text-lg">{content.intro}</p>

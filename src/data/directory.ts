@@ -18,32 +18,37 @@ export interface DirectoryListingView {
   order?: number
 }
 
-export const directoryPageContent: Record<DirectoryType, { title: string; intro: string }> = {
+export const directoryPageContent: Record<DirectoryType, { title: string; intro: string; bannerImage?: string }> = {
   artist: {
     title: 'Artists',
     intro: 'Our black communities have fantastic artists hidden in our deprived communities and do not have opportunities to be seen and known by both the black and the larger community. TUVAA aims to change that. As a result of the BBAM Festival we have arranged some exhibitions for some of the artist. We will continue to create platforms for exhibitions and also developmental pathways for their growth. You can enjoy some of the artworks by these artist here',
+    bannerImage: '/images/bbam-collage.jpg',
   },
   musician: {
     title: 'Musicians',
     intro: 'TUVAA supports Black, African, Caribbean and community musicians by creating platforms where their talent can be celebrated, promoted and connected with wider audiences. Through BBAM and community events, musicians are given opportunities to perform, network and grow their creative journey.',
+    bannerImage: '/images/tuvaa-music.jpg',
   },
   business: {
     title: 'Businesses',
     intro: 'TUVAA promotes Black and African-owned businesses by giving them visibility, networking opportunities and community support. The BBAM platform helps entrepreneurs showcase their services, connect with customers and grow sustainable businesses.',
+    bannerImage: '/images/bbam-gala.jpg',
   },
   professional: {
     title: 'Skills / Professionals',
     intro: 'The Skills and Professionals directory highlights talented individuals, experts and skilled community members who can support growth, mentoring, training and collaboration across our communities.',
+    bannerImage: '/images/tuva1-400x450.jpg',
   },
   community_group: {
     title: 'Community Groups',
     intro: 'TUVAA works with African community groups in Southampton and Hampshire to build unity, representation and stronger community support. This directory helps groups become visible, connect with others and access opportunities through the wider TUVAA network.',
+    bannerImage: '/images/african-family-group.jpg',
   },
 }
 
 const images = {
   artist: ['/images/artist-1.jpg', '/images/artist-2.jpg', '/images/artist-3.jpg', '/images/artist-4.jpg', '/images/artist-5.jpg', '/images/artist-6.jpg', '/images/artist-7.jpg', '/images/artist-8.jpg'],
-  musician: ['/images/bbam-video-thumb.jpg', '/images/african-dance.jpg', '/images/bbam-gala-video.jpg', '/images/bbam-festival-2025.jpg'],
+  musician: ['/images/tuvaa-music.jpg', '/images/african-dance.jpg', '/images/events-cultural.jpg', '/images/tuvaa-enjoy.jpg'],
   business: ['/images/bbam-gala.jpg', '/images/community-meeting.jpg', '/images/education-empowerment.jpg', '/images/support-tuvaa-donate.jpg'],
   professional: ['/images/tuva1-400x450.jpg', '/images/youth-empowerment.jpg', '/images/hidden-histories.png', '/images/health-wellbeing-info.jpg'],
   community_group: ['/images/african-family-group.jpg', '/images/community-meeting.jpg', '/images/events-cultural.jpg', '/images/newtown-community-centre.jpg'],

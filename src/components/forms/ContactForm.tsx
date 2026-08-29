@@ -120,39 +120,51 @@ export default function ContactForm() {
 
         {/* Name Input */}
         <div>
+          <label htmlFor="contact-name" className="block text-xs font-cinzel font-semibold uppercase tracking-wider text-[#35170f] mb-1.5">
+            Your Name <span className="text-red-500 font-bold ml-1 text-sm">*</span>
+          </label>
           <input
+            id="contact-name"
             type="text"
-            placeholder="Your name*"
+            placeholder="e.g. John Doe"
             {...register('name')}
             aria-invalid={!!errors.name}
             aria-describedby={errors.name ? 'contact-name-error' : undefined}
-            className={`w-full px-5 py-4 bg-[#fcfbfa] border rounded-sm focus:outline-none text-base transition-colors text-[#35170f] placeholder-[#a0988e] ${errors.name ? 'border-red-400 focus:border-red-500' : 'border-[#e8dfc8] focus:border-[#DB9E30]'}`}
+            className={`w-full px-5 py-3.5 bg-[#fcfbfa] border rounded-sm focus:outline-none text-base transition-colors text-[#35170f] placeholder-[#8b8178] focus:bg-white ${errors.name ? 'border-red-400 focus:border-red-500' : 'border-[#d8cfc4] focus:border-[#DB9E30]'}`}
           />
           {errors.name && <p id="contact-name-error" className="text-xs text-red-500 mt-1">{errors.name.message}</p>}
         </div>
 
         {/* Email Input */}
         <div>
+          <label htmlFor="contact-email" className="block text-xs font-cinzel font-semibold uppercase tracking-wider text-[#35170f] mb-1.5">
+            Your E-mail <span className="text-red-500 font-bold ml-1 text-sm">*</span>
+          </label>
           <input
+            id="contact-email"
             type="email"
-            placeholder="Your e-mail*"
+            placeholder="e.g. john@example.com"
             {...register('email')}
             aria-invalid={!!errors.email}
             aria-describedby={errors.email ? 'contact-email-error' : undefined}
-            className={`w-full px-5 py-4 bg-[#fcfbfa] border rounded-sm focus:outline-none text-base transition-colors text-[#35170f] placeholder-[#a0988e] ${errors.email ? 'border-red-400 focus:border-red-500' : 'border-[#e8dfc8] focus:border-[#DB9E30]'}`}
+            className={`w-full px-5 py-3.5 bg-[#fcfbfa] border rounded-sm focus:outline-none text-base transition-colors text-[#35170f] placeholder-[#8b8178] focus:bg-white ${errors.email ? 'border-red-400 focus:border-red-500' : 'border-[#d8cfc4] focus:border-[#DB9E30]'}`}
           />
           {errors.email && <p id="contact-email-error" className="text-xs text-red-500 mt-1">{errors.email.message}</p>}
         </div>
 
         {/* Message Input */}
         <div>
+          <label htmlFor="contact-message" className="block text-xs font-cinzel font-semibold uppercase tracking-wider text-[#35170f] mb-1.5">
+            Your Message <span className="text-red-500 font-bold ml-1 text-sm">*</span>
+          </label>
           <textarea
-            rows={6}
-            placeholder="Your message*"
+            id="contact-message"
+            rows={5}
+            placeholder="How can we help you?"
             {...register('message')}
             aria-invalid={!!errors.message}
             aria-describedby={errors.message ? 'contact-message-error' : undefined}
-            className={`w-full px-5 py-4 bg-[#fcfbfa] border rounded-sm focus:outline-none text-base transition-colors text-[#35170f] placeholder-[#a0988e] resize-none ${errors.message ? 'border-red-400 focus:border-red-500' : 'border-[#e8dfc8] focus:border-[#DB9E30]'}`}
+            className={`w-full px-5 py-3.5 bg-[#fcfbfa] border rounded-sm focus:outline-none text-base transition-colors text-[#35170f] placeholder-[#8b8178] focus:bg-white resize-none ${errors.message ? 'border-red-400 focus:border-red-500' : 'border-[#d8cfc4] focus:border-[#DB9E30]'}`}
           />
           {errors.message && <p id="contact-message-error" className="text-xs text-red-500 mt-1">{errors.message.message}</p>}
         </div>

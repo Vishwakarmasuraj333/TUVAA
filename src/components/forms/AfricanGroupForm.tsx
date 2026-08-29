@@ -54,8 +54,8 @@ export default function AfricanGroupForm() {
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 text-left max-w-2xl mx-auto">
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
         <div>
-          <label htmlFor="fullName" className="block text-xs font-cinzel text-gold-400 uppercase tracking-widest mb-2">
-            Contact Full Name <span className="text-red-400 font-bold ml-0.5">*</span>
+          <label htmlFor="fullName" className="block text-xs font-cinzel font-semibold text-[#35170f] uppercase tracking-wider mb-2">
+            Contact Full Name <span className="text-red-500 font-bold ml-1 text-sm">*</span>
           </label>
           <input
             type="text"
@@ -64,14 +64,14 @@ export default function AfricanGroupForm() {
             {...register('fullName')}
             aria-invalid={!!errors.fullName}
             aria-describedby={errors.fullName ? 'african-name-error' : undefined}
-            className="w-full px-4 py-3 bg-white border border-gold-500/20 rounded focus:outline-none focus:border-gold-500 text-sm transition-colors text-charcoal"
+            className={`w-full px-4 py-3 bg-[#fcfbfa] border rounded focus:outline-none text-sm transition-colors text-[#35170f] placeholder-[#8b8178] focus:bg-white ${errors.fullName ? 'border-red-400 focus:border-red-500' : 'border-[#d8cfc4] focus:border-[#DB9E30]'}`}
           />
-          {errors.fullName && <p id="african-name-error" className="text-xs text-sunset-500 mt-1">{errors.fullName.message}</p>}
+          {errors.fullName && <p id="african-name-error" className="text-xs text-red-500 mt-1">{errors.fullName.message}</p>}
         </div>
 
         <div>
-          <label htmlFor="emailAddress" className="block text-xs font-cinzel text-gold-400 uppercase tracking-widest mb-2">
-            Email Address <span className="text-red-400 font-bold ml-0.5">*</span>
+          <label htmlFor="emailAddress" className="block text-xs font-cinzel font-semibold text-[#35170f] uppercase tracking-wider mb-2">
+            Email Address <span className="text-red-500 font-bold ml-1 text-sm">*</span>
           </label>
           <input
             type="email"
@@ -80,18 +80,18 @@ export default function AfricanGroupForm() {
             {...register('emailAddress')}
             aria-invalid={!!errors.emailAddress}
             aria-describedby={errors.emailAddress ? 'african-email-error' : undefined}
-            className="w-full px-4 py-3 bg-white border border-gold-500/20 rounded focus:outline-none focus:border-gold-500 text-sm transition-colors text-charcoal"
+            className={`w-full px-4 py-3 bg-[#fcfbfa] border rounded focus:outline-none text-sm transition-colors text-[#35170f] placeholder-[#8b8178] focus:bg-white ${errors.emailAddress ? 'border-red-400 focus:border-red-500' : 'border-[#d8cfc4] focus:border-[#DB9E30]'}`}
           />
           {errors.emailAddress && (
-            <p id="african-email-error" className="text-xs text-sunset-500 mt-1">{errors.emailAddress.message}</p>
+            <p id="african-email-error" className="text-xs text-red-500 mt-1">{errors.emailAddress.message}</p>
           )}
         </div>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
         <div>
-          <label htmlFor="contactNumber" className="block text-xs font-cinzel text-gold-400 uppercase tracking-widest mb-2">
-            Contact Phone Number <span className="text-red-400 font-bold ml-0.5">*</span>
+          <label htmlFor="contactNumber" className="block text-xs font-cinzel font-semibold text-[#35170f] uppercase tracking-wider mb-2">
+            Contact Phone Number <span className="text-red-500 font-bold ml-1 text-sm">*</span>
           </label>
           <input
             type="tel"
@@ -102,16 +102,16 @@ export default function AfricanGroupForm() {
             {...register('contactNumber')}
             aria-invalid={!!errors.contactNumber}
             aria-describedby={errors.contactNumber ? 'african-phone-error' : undefined}
-            className="w-full px-4 py-3 bg-white border border-gold-500/20 rounded focus:outline-none focus:border-gold-500 text-sm transition-colors text-charcoal"
+            className={`w-full px-4 py-3 bg-[#fcfbfa] border rounded focus:outline-none text-sm transition-colors text-[#35170f] placeholder-[#8b8178] focus:bg-white ${errors.contactNumber ? 'border-red-400 focus:border-red-500' : 'border-[#d8cfc4] focus:border-[#DB9E30]'}`}
           />
           {errors.contactNumber && (
-            <p id="african-phone-error" className="text-xs text-sunset-500 mt-1">{errors.contactNumber.message}</p>
+            <p id="african-phone-error" className="text-xs text-red-500 mt-1">{errors.contactNumber.message}</p>
           )}
         </div>
 
         <div>
-          <label htmlFor="communityGroupName" className="block text-xs font-cinzel text-gold-400 uppercase tracking-widest mb-2">
-            African Community Group Name <span className="text-red-400 font-bold ml-0.5">*</span>
+          <label htmlFor="communityGroupName" className="block text-xs font-cinzel font-semibold text-[#35170f] uppercase tracking-wider mb-2">
+            African Community Group Name <span className="text-red-500 font-bold ml-1 text-sm">*</span>
           </label>
           <input
             type="text"
@@ -120,17 +120,17 @@ export default function AfricanGroupForm() {
             {...register('communityGroupName')}
             aria-invalid={!!errors.communityGroupName}
             aria-describedby={errors.communityGroupName ? 'african-group-error' : undefined}
-            className="w-full px-4 py-3 bg-white border border-gold-500/20 rounded focus:outline-none focus:border-gold-500 text-sm transition-colors text-charcoal"
+            className={`w-full px-4 py-3 bg-[#fcfbfa] border rounded focus:outline-none text-sm transition-colors text-[#35170f] placeholder-[#8b8178] focus:bg-white ${errors.communityGroupName ? 'border-red-400 focus:border-red-500' : 'border-[#d8cfc4] focus:border-[#DB9E30]'}`}
           />
           {errors.communityGroupName && (
-            <p id="african-group-error" className="text-xs text-sunset-500 mt-1">{errors.communityGroupName.message}</p>
+            <p id="african-group-error" className="text-xs text-red-500 mt-1">{errors.communityGroupName.message}</p>
           )}
         </div>
       </div>
 
       <div>
-        <label htmlFor="communityGroupAddress" className="block text-xs font-cinzel text-gold-400 uppercase tracking-widest mb-2">
-          Community Group Address <span className="text-red-400 font-bold ml-0.5">*</span>
+        <label htmlFor="communityGroupAddress" className="block text-xs font-cinzel font-semibold text-[#35170f] uppercase tracking-wider mb-2">
+          Community Group Address <span className="text-red-500 font-bold ml-1 text-sm">*</span>
         </label>
         <input
           type="text"
@@ -139,15 +139,15 @@ export default function AfricanGroupForm() {
           {...register('communityGroupAddress')}
           aria-invalid={!!errors.communityGroupAddress}
           aria-describedby={errors.communityGroupAddress ? 'african-address-error' : undefined}
-          className="w-full px-4 py-3 bg-white border border-gold-500/20 rounded focus:outline-none focus:border-gold-500 text-sm transition-colors text-charcoal"
+          className={`w-full px-4 py-3 bg-[#fcfbfa] border rounded focus:outline-none text-sm transition-colors text-[#35170f] placeholder-[#8b8178] focus:bg-white ${errors.communityGroupAddress ? 'border-red-400 focus:border-red-500' : 'border-[#d8cfc4] focus:border-[#DB9E30]'}`}
         />
         {errors.communityGroupAddress && (
-          <p id="african-address-error" className="text-xs text-sunset-500 mt-1">{errors.communityGroupAddress.message}</p>
+          <p id="african-address-error" className="text-xs text-red-500 mt-1">{errors.communityGroupAddress.message}</p>
         )}
       </div>
 
       <div>
-        <label htmlFor="message" className="block text-xs font-cinzel text-gold-400 uppercase tracking-widest mb-2">
+        <label htmlFor="message" className="block text-xs font-cinzel font-semibold text-[#35170f] uppercase tracking-wider mb-2">
           Additional Message (Optional)
         </label>
         <textarea
@@ -155,9 +155,9 @@ export default function AfricanGroupForm() {
           rows={4}
           placeholder="How can TUVAA support your group..."
           {...register('message')}
-          className="w-full px-4 py-3 bg-white border border-gold-500/20 rounded focus:outline-none focus:border-gold-500 text-sm transition-colors text-charcoal resize-none"
+          className="w-full px-4 py-3 bg-[#fcfbfa] border border-[#d8cfc4] rounded focus:outline-none focus:border-[#DB9E30] text-sm transition-colors text-[#35170f] placeholder-[#8b8178] focus:bg-white resize-none"
         />
-        {errors.message && <p className="text-xs text-sunset-500 mt-1">{errors.message.message}</p>}
+        {errors.message && <p className="text-xs text-red-500 mt-1">{errors.message.message}</p>}
       </div>
 
       <div>

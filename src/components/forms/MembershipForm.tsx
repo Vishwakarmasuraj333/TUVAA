@@ -55,8 +55,8 @@ export default function MembershipForm() {
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 text-left max-w-2xl mx-auto">
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
         <div>
-          <label htmlFor="name" className="block text-xs font-cinzel text-gold-400 uppercase tracking-widest mb-2">
-            Association / Group Name <span className="text-red-400 font-bold ml-0.5">*</span>
+          <label htmlFor="name" className="block text-xs font-cinzel font-semibold text-[#35170f] uppercase tracking-wider mb-2">
+            Association / Group Name <span className="text-red-500 font-bold ml-1 text-sm">*</span>
           </label>
           <input
             type="text"
@@ -65,14 +65,14 @@ export default function MembershipForm() {
             {...register('name')}
             aria-invalid={!!errors.name}
             aria-describedby={errors.name ? 'membership-name-error' : undefined}
-            className="w-full px-4 py-3 bg-white border border-gold-500/20 rounded focus:outline-none focus:border-gold-500 text-sm transition-colors text-charcoal"
+            className={`w-full px-4 py-3 bg-[#fcfbfa] border rounded focus:outline-none text-sm transition-colors text-[#35170f] placeholder-[#8b8178] focus:bg-white ${errors.name ? 'border-red-400 focus:border-red-500' : 'border-[#d8cfc4] focus:border-[#DB9E30]'}`}
           />
-          {errors.name && <p id="membership-name-error" className="text-xs text-sunset-500 mt-1">{errors.name.message}</p>}
+          {errors.name && <p id="membership-name-error" className="text-xs text-red-500 mt-1">{errors.name.message}</p>}
         </div>
 
         <div>
-          <label htmlFor="email" className="block text-xs font-cinzel text-gold-400 uppercase tracking-widest mb-2">
-            Official Email Address <span className="text-red-400 font-bold ml-0.5">*</span>
+          <label htmlFor="email" className="block text-xs font-cinzel font-semibold text-[#35170f] uppercase tracking-wider mb-2">
+            Official Email Address <span className="text-red-500 font-bold ml-1 text-sm">*</span>
           </label>
           <input
             type="email"
@@ -81,16 +81,16 @@ export default function MembershipForm() {
             {...register('email')}
             aria-invalid={!!errors.email}
             aria-describedby={errors.email ? 'membership-email-error' : undefined}
-            className="w-full px-4 py-3 bg-white border border-gold-500/20 rounded focus:outline-none focus:border-gold-500 text-sm transition-colors text-charcoal"
+            className={`w-full px-4 py-3 bg-[#fcfbfa] border rounded focus:outline-none text-sm transition-colors text-[#35170f] placeholder-[#8b8178] focus:bg-white ${errors.email ? 'border-red-400 focus:border-red-500' : 'border-[#d8cfc4] focus:border-[#DB9E30]'}`}
           />
-          {errors.email && <p id="membership-email-error" className="text-xs text-sunset-500 mt-1">{errors.email.message}</p>}
+          {errors.email && <p id="membership-email-error" className="text-xs text-red-500 mt-1">{errors.email.message}</p>}
         </div>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
         <div>
-          <label htmlFor="contactNumber" className="block text-xs font-cinzel text-gold-400 uppercase tracking-widest mb-2">
-            Contact Number <span className="text-red-400 font-bold ml-0.5">*</span>
+          <label htmlFor="contactNumber" className="block text-xs font-cinzel font-semibold text-[#35170f] uppercase tracking-wider mb-2">
+            Contact Number <span className="text-red-500 font-bold ml-1 text-sm">*</span>
           </label>
           <input
             type="tel"
@@ -101,16 +101,16 @@ export default function MembershipForm() {
             {...register('contactNumber')}
             aria-invalid={!!errors.contactNumber}
             aria-describedby={errors.contactNumber ? 'membership-phone-error' : undefined}
-            className="w-full px-4 py-3 bg-white border border-gold-500/20 rounded focus:outline-none focus:border-gold-500 text-sm transition-colors text-charcoal"
+            className={`w-full px-4 py-3 bg-[#fcfbfa] border rounded focus:outline-none text-sm transition-colors text-[#35170f] placeholder-[#8b8178] focus:bg-white ${errors.contactNumber ? 'border-red-400 focus:border-red-500' : 'border-[#d8cfc4] focus:border-[#DB9E30]'}`}
           />
           {errors.contactNumber && (
-            <p id="membership-phone-error" className="text-xs text-sunset-500 mt-1">{errors.contactNumber.message}</p>
+            <p id="membership-phone-error" className="text-xs text-red-500 mt-1">{errors.contactNumber.message}</p>
           )}
         </div>
 
         <div>
-          <label htmlFor="addressLine1" className="block text-xs font-cinzel text-gold-400 uppercase tracking-widest mb-2">
-            Address Line 1 <span className="text-red-400 font-bold ml-0.5">*</span>
+          <label htmlFor="addressLine1" className="block text-xs font-cinzel font-semibold text-[#35170f] uppercase tracking-wider mb-2">
+            Address Line 1 <span className="text-red-500 font-bold ml-1 text-sm">*</span>
           </label>
           <input
             type="text"
@@ -119,18 +119,18 @@ export default function MembershipForm() {
             {...register('addressLine1')}
             aria-invalid={!!errors.addressLine1}
             aria-describedby={errors.addressLine1 ? 'membership-address-error' : undefined}
-            className="w-full px-4 py-3 bg-white border border-gold-500/20 rounded focus:outline-none focus:border-gold-500 text-sm transition-colors text-charcoal"
+            className={`w-full px-4 py-3 bg-[#fcfbfa] border rounded focus:outline-none text-sm transition-colors text-[#35170f] placeholder-[#8b8178] focus:bg-white ${errors.addressLine1 ? 'border-red-400 focus:border-red-500' : 'border-[#d8cfc4] focus:border-[#DB9E30]'}`}
           />
           {errors.addressLine1 && (
-            <p id="membership-address-error" className="text-xs text-sunset-500 mt-1">{errors.addressLine1.message}</p>
+            <p id="membership-address-error" className="text-xs text-red-500 mt-1">{errors.addressLine1.message}</p>
           )}
         </div>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
         <div>
-          <label htmlFor="city" className="block text-xs font-cinzel text-gold-400 uppercase tracking-widest mb-2">
-            City <span className="text-red-400 font-bold ml-0.5">*</span>
+          <label htmlFor="city" className="block text-xs font-cinzel font-semibold text-[#35170f] uppercase tracking-wider mb-2">
+            City <span className="text-red-500 font-bold ml-1 text-sm">*</span>
           </label>
           <input
             type="text"
@@ -139,14 +139,14 @@ export default function MembershipForm() {
             {...register('city')}
             aria-invalid={!!errors.city}
             aria-describedby={errors.city ? 'membership-city-error' : undefined}
-            className="w-full px-4 py-3 bg-white border border-gold-500/20 rounded focus:outline-none focus:border-gold-500 text-sm transition-colors text-charcoal"
+            className={`w-full px-4 py-3 bg-[#fcfbfa] border rounded focus:outline-none text-sm transition-colors text-[#35170f] placeholder-[#8b8178] focus:bg-white ${errors.city ? 'border-red-400 focus:border-red-500' : 'border-[#d8cfc4] focus:border-[#DB9E30]'}`}
           />
-          {errors.city && <p id="membership-city-error" className="text-xs text-sunset-500 mt-1">{errors.city.message}</p>}
+          {errors.city && <p id="membership-city-error" className="text-xs text-red-500 mt-1">{errors.city.message}</p>}
         </div>
 
         <div>
-          <label htmlFor="country" className="block text-xs font-cinzel text-gold-400 uppercase tracking-widest mb-2">
-            Country of Origin <span className="text-red-400 font-bold ml-0.5">*</span>
+          <label htmlFor="country" className="block text-xs font-cinzel font-semibold text-[#35170f] uppercase tracking-wider mb-2">
+            Country of Origin <span className="text-red-500 font-bold ml-1 text-sm">*</span>
           </label>
           <input
             type="text"
@@ -155,14 +155,14 @@ export default function MembershipForm() {
             {...register('country')}
             aria-invalid={!!errors.country}
             aria-describedby={errors.country ? 'membership-country-error' : undefined}
-            className="w-full px-4 py-3 bg-white border border-gold-500/20 rounded focus:outline-none focus:border-gold-500 text-sm transition-colors text-charcoal"
+            className={`w-full px-4 py-3 bg-[#fcfbfa] border rounded focus:outline-none text-sm transition-colors text-[#35170f] placeholder-[#8b8178] focus:bg-white ${errors.country ? 'border-red-400 focus:border-red-500' : 'border-[#d8cfc4] focus:border-[#DB9E30]'}`}
           />
-          {errors.country && <p id="membership-country-error" className="text-xs text-sunset-500 mt-1">{errors.country.message}</p>}
+          {errors.country && <p id="membership-country-error" className="text-xs text-red-500 mt-1">{errors.country.message}</p>}
         </div>
       </div>
 
       <div>
-        <label htmlFor="message" className="block text-xs font-cinzel text-gold-400 uppercase tracking-widest mb-2">
+        <label htmlFor="message" className="block text-xs font-cinzel font-semibold text-[#35170f] uppercase tracking-wider mb-2">
           Brief description of group activities
         </label>
         <textarea
@@ -170,9 +170,9 @@ export default function MembershipForm() {
           rows={4}
           placeholder="Please describe your organization's goals and communities..."
           {...register('message')}
-          className="w-full px-4 py-3 bg-white border border-gold-500/20 rounded focus:outline-none focus:border-gold-500 text-sm transition-colors text-charcoal resize-none"
+          className="w-full px-4 py-3 bg-[#fcfbfa] border border-[#d8cfc4] rounded focus:outline-none focus:border-[#DB9E30] text-sm transition-colors text-[#35170f] placeholder-[#8b8178] focus:bg-white resize-none"
         />
-        {errors.message && <p className="text-xs text-sunset-500 mt-1">{errors.message.message}</p>}
+        {errors.message && <p className="text-xs text-red-500 mt-1">{errors.message.message}</p>}
       </div>
 
       <div>

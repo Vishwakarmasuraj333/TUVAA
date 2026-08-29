@@ -35,13 +35,13 @@ export default function ContactPage() {
               <div className="space-y-2 pt-2 text-sm md:text-base font-medium">
                 <p>
                   <span className="text-[#35170f] font-bold">Phone:</span>{' '}
-                  <a href="tel:07385932327" className="text-[#DB9E30] hover:text-[#57a68f] transition-colors underline decoration-dotted">
+                  <a href="tel:07385932327" className="text-[#DB9E30] hover:text-[#57a68f] transition-colors">
                     07385932327
                   </a>
                 </p>
                 <p>
                   <span className="text-[#35170f] font-bold">Email:</span>{' '}
-                  <a href="mailto:info@tuvaa.org.uk" className="text-[#DB9E30] hover:text-[#57a68f] transition-colors underline decoration-dotted">
+                  <a href="mailto:info@tuvaa.org.uk" className="text-[#DB9E30] hover:text-[#57a68f] transition-colors">
                     info@tuvaa.org.uk
                   </a>
                 </p>
